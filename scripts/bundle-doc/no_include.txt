@@ -1,0 +1,115 @@
+# ==============================================================================
+# MeteoSport — Règles d'exclusion du bundle Markdown (no_include.txt)
+# ==============================================================================
+# - Dossiers & chemins : débutent par '/' (ex: /dist ou /scripts/bundle-doc/config)
+# - Noms de fichiers exacts ou motifs : ex: package-lock.json, .env*
+# - Extensions de fichiers : débutent par '.' (ex: .svg ou .png)
+# - Les lignes vides et les commentaires débutant par '#' sont ignorés.
+
+# ==============================================================================
+# 1. Dossiers et sous-chemins à exclure
+# ==============================================================================
+
+# Compilation & build
+/dist
+/build
+/out
+
+# Gestionnaires de paquets
+/node_modules
+/.npm
+
+# Outils de test & couverture
+/test-results
+/playwright-report
+/.playwright
+/coverage
+/.nyc_output
+
+# Caches
+/.vite
+/.cache
+
+# Contrôle de version
+/.git
+/.github
+
+# Environnements IDE & système
+/.idea
+/.vscode
+/.settings
+/.history
+/.system_generated
+/.devcontainer
+/.local
+
+# Configuration interne du bundler
+/scripts/bundle-doc/config
+
+# Notes collaboratives (hors référentiel TDD)
+/collab
+
+# Dossiers temporaires
+/tmp
+/temp
+/rapports
+
+# ==============================================================================
+# 2. Noms de fichiers exacts et motifs
+# ==============================================================================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+no_include.txt
+.env*
+env.test
+env.example
+env.local
+*.env
+*.env.*
+.DS_Store
+Thumbs.db
+desktop.ini
+.gitkeep
+
+# ==============================================================================
+# 3. Extensions exclues
+# ==============================================================================
+
+# Images (.puml reste inclus)
+.svg
+.png
+.jpg
+.jpeg
+.gif
+.webp
+.bmp
+.tiff
+.ico
+.psd
+.ai
+
+# Bureautique & PDF
+.pdf
+.doc
+.docx
+.xls
+.xlsx
+.ppt
+.pptx
+
+# Archives & binaires
+.zip
+.tar
+.gz
+.tgz
+.7z
+.rar
+.exe
+.dll
+.so
+.dylib
+.bin
+
+# Journaux
+.log

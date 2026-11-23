@@ -1,0 +1,10 @@
+{
+  "maxLines": 2000,
+  "folders": [
+    { "path": "README.md", "recursive": false },
+    { "path": "tdd", "recursive": true },
+    { "path": "package.json", "recursive": false },
+    { "path": "src", "recursive": true },
+    { "path": "tests", "recursive": true }
+  ]
+}

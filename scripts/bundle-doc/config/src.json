@@ -1,0 +1,4 @@
+{
+  "maxLines": 2000,
+  "folders": [{ "path": "src", "recursive": true }]
+}

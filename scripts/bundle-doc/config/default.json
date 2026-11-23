@@ -1,0 +1,16 @@
+{
+  "maxLines": 2000,
+  "folders": [
+    { "path": "tdd/docs/cdc", "recursive": true },
+    { "path": "tdd/docs/cr", "recursive": true },
+    { "path": "tdd/docs/adr", "recursive": true },
+    { "path": "tdd/specs", "recursive": true },
+    { "path": "tdd/docs/uml", "recursive": true },
+    { "path": "tdd/docs/signature", "recursive": true },
+    { "path": "tdd/docs/impact", "recursive": true },
+    { "path": "tdd/docs/delegation", "recursive": true },
+    { "path": "tdd/docs/prompt", "recursive": true },
+    { "path": "tdd/docs", "recursive": false },
+    { "path": "tdd/tests", "recursive": true }
+  ]
+}

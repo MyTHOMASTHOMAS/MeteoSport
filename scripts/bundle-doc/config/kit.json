@@ -1,0 +1,10 @@
+{
+  "maxLines": 2000,
+  "folders": [
+    { "path": "tdd/README.md", "recursive": false },
+    { "path": "tdd/docs", "recursive": true },
+    { "path": "tdd/specs", "recursive": true },
+    { "path": "tdd/tests", "recursive": true },
+    { "path": "tdd/projet", "recursive": true }
+  ]
+}
