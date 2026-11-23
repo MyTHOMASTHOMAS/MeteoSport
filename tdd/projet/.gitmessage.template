@@ -1,0 +1,18 @@
+# <type>(<domaine>): <SPEC-ID> <description courte à l'impératif>
+#
+# <pourquoi ce changement, si ce n'est pas évident à la lecture du diff>
+#
+# Generated-by: <outil>     ← à conserver UNIQUEMENT si le contenu a été produit par l'agent
+#
+# ---------------------------------------------------------------------------
+# type     : spec | design | test | feat | fix | docs | chore
+# domaine  : <domaine1> | <domaine2> | <domaine3> | …
+# SPEC-ID  : SPEC-<DOM>-<nn> — obligatoire pour spec, test, feat, fix
+#
+# Exemples
+#   spec(<domaine>): SPEC-<DOM>-<nn> <description>
+#   test(<domaine>): CASE-<DOM>-<nn> <description>
+#   feat(<domaine>): SPEC-<DOM>-<nn> <description>
+#
+# Activer ce gabarit :  git config commit.template .gitmessage
+# ---------------------------------------------------------------------------
