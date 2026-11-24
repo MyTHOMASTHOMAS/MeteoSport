@@ -1,0 +1,6 @@
+{
+  "id": "prompt-chef-planification",
+  "name": "Planification initiale globale",
+  "content": "Tu démarres la session globale de validation des spécifications.\n1. Analyse les fichiers présents dans 'tdd/specs/' (ex. 'sommaire.md', 'administration.md', 'comparateur.md', 'peche.md') et compare avec 'tdd/docs/cdc/cahier-des-charges-v1.md'.\n2. Crée 'out/validation-specs/planification.md' avec le tableau complet de toutes les spécifications écrites, leur statut initial (A_VERIFIER) et le compteur d'itérations (0).\n3. Sélectionne la première spécification à traiter et passe son statut à 'EN_COURS'.\n4. Inscris la ligne de cadrage :\nSPEC_ACTIVE: tdd/specs/<nom_du_fichier>.md"
+}
+

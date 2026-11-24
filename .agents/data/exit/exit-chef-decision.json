@@ -1,0 +1,6 @@
+{
+  "id": "exit-chef-decision",
+  "name": "Ordre de sortie décision Chef",
+  "content": "Termine impérativement ta réponse par une ligne contenant uniquement l'une des 3 décisions exactes :\n- 'DECISION: REBOUCLER_MEME_SPEC' (si corrections critiques apportées nécessitant une nouvelle vérification de la même spec)\n- 'DECISION: SPEC_SUIVANTE' (si la spec active est validée et qu'il reste d'autres specs à traiter)\n- 'DECISION: TOUT_TERMINE' (si toutes les spécifications ont été validées avec succès)"
+}
+
