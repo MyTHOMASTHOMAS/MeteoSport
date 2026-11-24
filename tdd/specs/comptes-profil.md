@@ -24,7 +24,7 @@
 - Ne couvre pas la saisie des données de profil → `SPEC-AUTH-06`.
 - Ne couvre pas les règles de robustesse et de conservation du mot de passe → `SPEC-AUTH-04`.
 - Ne couvre pas la création des comptes administrateurs, faite par l'équipe → `SPEC-ADMIN-nn`.
-- Ne couvre pas la rédaction juridique des CGU et de la politique de confidentialité (modèle fourni par l'équipe, validé par le client, CR-001/§6 `ZO-12`) → hors périmètre.
+- Ne couvre pas la rédaction juridique des CGU et de la politique de confidentialité (modèle fourni par l'équipe, validé par le client : REQ-020 ; `ZO-12`, à valider à la recette selon CR-001/§6) → hors périmètre.
 
 ### Scénarios nominaux
 
@@ -105,11 +105,11 @@ Scénario : CGU non acceptées
 
 - Couvre la connexion par identifiant et mot de passe, la déconnexion et le maintien de la session.
 - Couvre l'interdiction de toute consultation sans compte (R-16).
-- Couvre la disponibilité du profil et du classement des sports sur plusieurs appareils (REQ-015 ; arbitrage CR-001/§5.2 n° 17, `ZO-24` : « profil et classement des sports seulement »).
+- Couvre la disponibilité du profil et du classement des sports sur plusieurs appareils (REQ-015 ; `ZO-24`, tranchée et validée par le client, CR-001/§5.2 n° 17 : « profil et classement des sports seulement »).
 - Ne couvre pas le blocage après échecs → `SPEC-AUTH-04`.
 - Ne couvre pas le mot de passe oublié → `SPEC-AUTH-03`.
 - Ne couvre pas l'accès à l'espace d'administration → `SPEC-ADMIN-nn`.
-- Ne couvre pas la synchronisation des recherches, itinéraires ou historiques de sortie → hors périmètre (même arbitrage `ZO-24` : seuls profil et classement sont retrouvés).
+- Ne couvre pas la synchronisation des recherches, itinéraires ou historiques de sortie → hors périmètre (`ZO-24`, tranchée : seuls profil et classement sont retrouvés).
 
 ### Scénarios nominaux
 
@@ -363,7 +363,7 @@ Scénario : Consultation de la politique de confidentialité
 
 - *24/11/2026* — Durée de conservation des données personnelles (ZO-26) : à fixer par le client. Elle s'applique aussi à l'historique du consentement (dates d'octroi et de retrait), conservé tant que le compte existe.
 - *24/11/2026* — Qualification RGPD de l'âge, du poids, de la taille et de la VMA en données de santé (ZO-33) : à trancher avec le client ; le consentement explicite est maintenu en attendant.
-- *24/11/2026* — Contenu de la politique de confidentialité : modèle fourni par l'équipe, validé par le client (CR-001/§6 `ZO-12`).
+- *24/11/2026* — Contenu de la politique de confidentialité : modèle fourni par l'équipe, validé par le client (REQ-020 ; `ZO-12`, à valider à la recette selon CR-001/§6).
 
 ### Critères d'acceptation
 
@@ -440,7 +440,7 @@ Scénario : Profil partiellement renseigné
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Plages plausibles (REQ-016, fixées par l'équipe) : proposition âge 15–100 ans, poids 30–250 kg, taille 120–230 cm, VMA 6–25 km/h. À valider à la recette.
-- *24/11/2026* — Valeurs par défaut (paramétrables, REQ-115) : à proposer avec les règles de calcul (`SPEC-CALC-nn`, CR-001/§6 `ZO-05`).
+- *24/11/2026* — Valeurs par défaut (paramétrables, REQ-115) : à proposer avec les règles de calcul (`SPEC-CALC-nn` ; `ZO-05`, règles de calcul à valider à la recette selon CR-001/§6).
 
 ### Critères d'acceptation
 
@@ -585,8 +585,14 @@ Scénario : Export complet
   Étant donné un utilisateur ayant consenti, renseigné sa VMA et classé ses sports
   Quand il demande l'export de ses données
   Alors il télécharge un fichier dans un format standard et lisible
-  Et ce fichier contient son identifiant, sa VMA, son classement des sports et les dates de consentement et d'acceptation des CGU
+  Et ce fichier contient son identifiant, son attestation d'âge, sa VMA, son classement des sports, la date d'acceptation des CGU et l'historique de son consentement
   Et il ne contient pas son mot de passe
+
+Scénario : Export après retrait du consentement
+  Étant donné un utilisateur qui a consenti le 24/11/2026 puis retiré son consentement le 30/11/2026
+  Quand il demande l'export de ses données
+  Alors le fichier contient la date d'octroi et la date de retrait du consentement
+  Et il ne contient aucune donnée de forme physique
 ```
 
 ### Cas limites
@@ -606,6 +612,7 @@ Scénario : Export complet
 - [ ] AC-1 — L'export contient toutes les données personnelles du compte et aucune d'un autre compte (`CASE-AUTH-34`).
 - [ ] AC-2 — L'export ne contient jamais le mot de passe (`CASE-AUTH-35`).
 - [ ] AC-3 — Les données non renseignées apparaissent comme telles, sans valeur par défaut (`CASE-AUTH-36`).
+- [ ] AC-4 — Après un retrait, l'export contient les dates d'octroi et de retrait du consentement et aucune donnée de forme (`CASE-AUTH-40`).
 
 ### Revue IA
 
