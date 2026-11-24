@@ -18,6 +18,7 @@
 | Multi-jours | **Option la plus simple** : recherche = aujourd'hui ; pas d'étapes multi-jours |
 | Pêche | **Solution Thomas** confirmée : spot unique GPS, pas de sous-techniques |
 | Pluies récentes | **Historique constitué en interne** via les appels météo |
+| Compte / profil | **Compte obligatoire** ; mesures (VMA, etc.) **facultatives** → défauts si absentes (`ZO-09`) |
 
 ---
 
@@ -40,7 +41,7 @@ La section 11.2 du Cahier des charges v1 recensait **28 ambiguïtés** (`AMB-01`
    * Modèle par défaut « sentier disponible ». Application de **règles de désactivation** (terrain dégradé sous forte pluie, fermeture administrative). Le trajet conseillé exclut les sentiers désactivés, tandis que le trajet choisi par l'utilisateur les signale avec alerte explicite (`AMB-04`, `AMB-13`, `AMB-24`).
 5. **Ciblage utilisateur & RGPD :**
    * Les **randonneurs font partie intégrante du public visé** au même titre que les traileurs (`AMB-14`).
-   * Pas de profil utilisateur sans inscription ; consentement et recueil du profil (VMA, gabarit) dès l'inscription (`AMB-28`). Seuils de niveau de VMA paramétrables dans le fichier d'environnement `.env` (`AMB-25`).
+   * **Compte obligatoire** pour se connecter ; les valeurs de profil (VMA, poids, taille…) sont **facultatives**. Si non renseignées → **valeurs / allure par défaut** (`AMB-28`, `ZO-09`). Consentement RGPD au parcours d'inscription. Seuils VMA dans `.env` (`AMB-25`).
 
 ---
 
@@ -75,7 +76,7 @@ La section 11.2 du Cahier des charges v1 recensait **28 ambiguïtés** (`AMB-01`
 | **AMB-25** | « Niveau » (§1 : « itinéraires selon le niveau », Q21) : comment se déduit-il du profil ? Comment l'âge, le poids et la taille entrent-ils dans les calculs ? | `CR-001/§1, Q21` | *« On estimera le niveau via la VMA seuil paramétrable dans l'env du projet »* | **Paliers VMA dans les variables d'environnement :** Le niveau utilisateur est déduit de la VMA renseignée. Les seuils de classification (ex : Débutant, Intermédiaire, Expert) sont définis dans le `.env` (`VMA_THRESHOLD_BEGINNER`, etc.), garantissant une adaptation facile sans redéploiement. | ✅ Tranché |
 | **AMB-26** | Q28 parle d'un « **objectif** 0 € ». Une source payante indispensable serait-elle refusée ou rediscutée avec le client ? | `CR-001/Q28` | *« Pas de source payante »* | **Contrainte absolue 0 € :** Interdiction ferme d'intégrer toute source de données payante. Toute donnée sans API gratuite disponible (ex: certaines prévisions de houle ou marées) est gérée par défaut ou omise avec avertissement explicite à l'utilisateur. | ✅ Tranché |
 | **AMB-27** | Q11 : « en tenant compte des préférences de l'utilisateur ». S'agit-il du seul classement des sports, ou d'autres éléments du profil ? | `CR-001/Q11` | *« Sport uniquement »* | **Arbitrage sur les sports favoris seuls :** Seul le classement hiérarchique des sports préférés (ordre de priorité déclaré par l'utilisateur) est utilisé pour départager les recommandations d'activités équivalentes (`R-12`). | ✅ Tranché |
-| **AMB-28** | Q24 : consentement « à l'inscription ». Ce n'est pas équivalent à « avant toute saisie » (REQ-018) si le profil est rempli après l'inscription. | `CR-001/Q24` | *« Sans inscription l'user n'a pas de profil, son profil est enregistré à l'inscription »* | **Inscription et profil synchrones :** Aucun profil sans compte utilisateur. Le recueil des données physiologiques (VMA, poids, taille) et le recueil obligatoire du consentement RGPD sont intégrés au parcours unifié de création de compte (`REQ-016`, `REQ-018`). | ✅ Tranché |
+| **AMB-28** | Q24 : consentement « à l'inscription ». Ce n'est pas équivalent à « avant toute saisie » (REQ-018) si le profil est rempli après l'inscription. | `CR-001/Q24` | *« Sans inscription l'user n'a pas de profil, son profil est enregistré à l'inscription »* | **Compte obligatoire, mesures facultatives :**<br>1. Un **compte** est requis pour se connecter (`REQ-016`).<br>2. Le formulaire de profil (VMA, poids, taille, âge…) est **proposé** à l'inscription / dans le compte, mais ces **valeurs ne sont pas obligatoires**.<br>3. Si non saisies (ou effacées après retrait de consentement `ZO-26`) → **valeurs / allure par défaut** (`ZO-09`), signalées à l'utilisateur.<br>4. Le consentement RGPD reste dans le parcours de création de compte (`REQ-018`). | ✅ Tranché |
 
 ---
 
@@ -115,7 +116,7 @@ flowchart TD
         Q["Balises = Stations météo (AMB-22)"]
         R["Zéro source payante (AMB-26)"]
         S["Seuils VMA dans .env (AMB-25) & Calcul dénivelé (AMB-11)"]
-        T["Profil & Consentement à l'inscription (AMB-28)"]
+        T["Compte obligatoire ; mesures facultatives + défauts (AMB-28, ZO-09)"]
         U["Préférence : classement sports uniquement (AMB-27)"]
     end
 
@@ -156,8 +157,8 @@ flowchart TD
 * **Contrainte de budget (`AMB-26`) :** Zéro source payante. En l'absence d'API marine gratuite fiable pour la houle ou les marées, avertissement transparent plutôt qu'abonnement.
 
 ### 3.5. Authentification, Profil et PWA
-* **Profil utilisateur (`AMB-28`) :** La saisie de la VMA, du poids, de la taille et le consentement RGPD sont exigés dès la création de compte. Pas d'accès au profil sans inscription.
-* **Paramétrage des niveaux (`AMB-25`) :** Les seuils de VMA (débutant, intermédiaire, confirmé) sont injectés via l'environnement (`.env`), facilitant l'ajustement sans recompilation.
+* **Compte & profil (`AMB-28`) :** Connexion = compte obligatoire. Les mesures (VMA, poids, taille, âge) sont **facultatives**. Non renseignées → allure / valeurs **par défaut** (`ZO-09`), clairement signalées. Consentement RGPD au parcours d'inscription ; retrait → effacement des données de forme (`ZO-26`) → retour aux défauts.
+* **Paramétrage des niveaux (`AMB-25`) :** Les seuils VMA (débutant, intermédiaire, confirmé) et les **valeurs par défaut** sont injectés via l'environnement (`.env`).
 * **PWA en ligne (`AMB-23`) :** L'application est une Progressive Web App connectée, sans base de données locale offline complexe. L'autonomie en montagne est assurée par l'export GPX (`AMB-08`, `AMB-19`).
 
 ---
@@ -178,5 +179,5 @@ Ce tableau synthétise les modifications à reporter directement dans le [cahier
 | **Système d'alertes** | §8, §9 | Règles spécifiques Réserve marine (`R-14`) et requin (`R-15`) codées en dur | Remplacement par un modèle d'alertes générique paramétrable (temporaires ou indéterminées) | `AMB-10`, `AMB-12`, `AMB-17`, `AMB-18`, `AMB-21` |
 | **Gestion des sentiers** | §9 | Source externe des sentiers indéterminée (`ZO-31`) | Sentiers officiels importés par seed interne ; mapping d'identifiants avec les API météo | `AMB-20` |
 | **PWA & Offline** | §7, §10 | Formulation ambiguë sur le mode hors-ligne simple | PWA connectée stricte (`REQ-101`) ; message explicite en cas de déconnexion (`REQ-109`) | `AMB-23` |
-| **Profil & RGPD** | §8, §9 | Consentement avant saisie vs inscription | Inscription unique intégrant profil et consentement RGPD synchrone ; VMA dans `.env` | `AMB-25`, `AMB-28` |
+| **Profil & RGPD** | §8, §9 | Consentement / saisie obligatoires ambigus | Compte obligatoire ; mesures **facultatives** ; défauts si absentes (`ZO-09`) ; consentement à l'inscription ; seuils / défauts dans `.env` | `AMB-25`, `AMB-28`, `ZO-09` |
 

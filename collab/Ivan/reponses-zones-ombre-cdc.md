@@ -19,6 +19,7 @@ ZO-10 n'est pas reprise : elle est déjà tranchée par CR-001/Q23 (compte oblig
 | Multi-jours / ZO-19 | **Option la plus simple** : pas d'étapes ; recherche = aujourd'hui |
 | Pêche / ZO-22 | **Solution Thomas** : 2 sports (trail + pêche), spot unique |
 | Pluies / ZO-32 | **Historique constitué en interne** |
+| Compte / profil | **Compte obligatoire** ; valeurs profil **facultatives** → défauts (`ZO-09`, AMB-28) |
 
 ---
 
@@ -41,7 +42,7 @@ ZO-10 n'est pas reprise : elle est déjà tranchée par CR-001/Q23 (compte oblig
 | ZO-05 | Règles de calcul (temps, eau, nourriture, sécurité), validation, rôle de la météo | Références publiques citées, validées par le client ; la chaleur augmente l'eau | OK |
 | ZO-06 | Seuils des conseils d'équipement | Grille simple (pluie, soleil, température, vent) proposée par l'équipe, validée par le client | OK |
 | ZO-07 | Qui fournit les seuils de sécurité par sentier | L'équipe propose pour les 3 parcours pilotes, le client valide | OK |
-| ZO-09 | VMA inconnue ou profil incomplet | Allure de référence par défaut, signalée ; temps et quantités personnalisés seulement avec profil complet | OK |
+| ZO-09 | VMA inconnue ou profil incomplet | Allure de référence par défaut, signalée ; temps et quantités personnalisés seulement avec profil complet | **Confirmé (aligné AMB-28) :** compte obligatoire pour se connecter ; VMA / poids / taille / âge **non obligatoires**. Si non saisis → **valeurs / allure par défaut** (signalées). Temps et quantités personnalisés seulement quand le profil est renseigné. |
 | ZO-17 | Critères de météo « idéale » pour un sentier | Verdict à 3 niveaux (favorable, défavorable, à risque) : règles du sentier + grille générale | OK |
 | ZO-19 | Heures de passage sur plusieurs jours | Étapes journalières, une heure de départ par étape | **Simplifié (arbitrage 24/11) :** pas de parcours multi-jours ni d'étapes. Recherche / recommandation = **aujourd'hui**. Prévisions météo **affichées sur 3 jours**. Heures de passage estimées sur la journée du trajet uniquement. |
 | ZO-20 | Vigilances officielles et fermetures générales | Alerte prioritaire, aucune sortie jugée favorable | OK |
