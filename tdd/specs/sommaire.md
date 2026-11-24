@@ -36,11 +36,12 @@ Index des domaines. Un fichier `specs/<domaine>.md` par domaine.
 
 ### `TRAIL` — Trail : recherche, routage et trajet conseillé
 - **Périmètre :** saisie des critères du jour même (départ/arrivée, heure de départ, aller simple/aller-retour, dénivelé) et second mode par distance ou niveau ; construction d'itinéraire sur sentiers balisés ajustable par l'utilisateur, affichage de l'état des sentiers et de la cotation, gestion des impasses (contrainte bloquante + parcours proche réalisable) et calcul du trajet conseillé sur le panel pilote lorsqu'un sentier est désactivé.
-- **Couverture CDC :** `REQ-001` à `REQ-004`, `REQ-006`, `REQ-008`, `REQ-010` ; `R-01`, `R-02`, `R-04`, `R-06`, `R-18`.
+- **Couverture CDC :** `REQ-001` à `REQ-004`, `REQ-006`, `REQ-008`, `REQ-010` (partiel avec `CALC`) ; `R-01`, `R-02`, `R-03`, `R-04`, `R-06`, `R-07`, `R-08`, `R-16` à `R-20` ; `REQ-026` et `R-11` (partiel avec `ADMIN` : affichage des alertes en cours sur le trajet choisi et le trajet conseillé, `SPEC-TRAIL-05`).
+- **Points à raccrocher ailleurs :** la clause de `REQ-002` « en aller-retour, la météo de chaque passage est affichée séparément » est couverte par `SPEC-METEO-04` (`METEO`) ; les variantes du panel pilote utilisées par le trajet conseillé sont à déclarer dans `REF`.
 
 ### `CALC` — Moteurs de calcul et explications
 - **Périmètre :** règles déterministes reproductibles et sans IA : temps de parcours (trail et randonnée, VMA ou allure par défaut, dénivelé), quantités d'eau et de nourriture (incluant la chaleur), grille d'équipement, verdict à 3 niveaux (règles du sentier, grille générale, vigilances officielles, pluie récente), affichage indicatif des points d'eau, et explications en langage courant (IA gratuite ou textes types).
-- **Couverture CDC :** `REQ-005`, `REQ-009`, `REQ-012` à `REQ-014`, `REQ-029`, `REQ-107` ; `R-05`, `R-09`, `R-17`, `R-19`, `R-20`.
+- **Couverture CDC :** `REQ-005`, `REQ-009`, `REQ-010` (niveau de l'utilisateur, partiel avec `TRAIL`), `REQ-012` à `REQ-014`, `REQ-029`, `REQ-107`, `REQ-115` (paramètres de calcul, partiel avec `ARCH`) ; `R-05`, `R-09`, `R-17`, `R-19`, `R-20`.
 
 ### `GPX` — Export GPX
 - **Périmètre :** validation du tracé retenu (trajet choisi ou trajet conseillé), génération d'un fichier `.gpx` conforme au format standard et contrôle de compatibilité pour l'import sur montres et GPS.
