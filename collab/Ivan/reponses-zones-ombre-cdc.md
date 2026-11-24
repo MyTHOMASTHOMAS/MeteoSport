@@ -1,12 +1,24 @@
 # Réponses aux zones d'ombre — CDC v1.1
 
-**Date :** 23/11/2026
-**Source :** `tdd/docs/cdc/cahier-des-charges-v1.md`, §11.3
+**Date :** 23/11/2026  
+**Mise à jour :** 24/11/2026 (arbitrage équipe)  
+**Source :** `tdd/docs/cdc/cahier-des-charges-v1.md`, §11.3  
 **Rédigé par :** Ivan
 
 Pour chaque zone d'ombre : la question, l'hypothèse actuelle du CDC, puis la réponse retenue. « OK » = hypothèse validée telle quelle.
 
 ZO-10 n'est pas reprise : elle est déjà tranchée par CR-001/Q23 (compte obligatoire).
+
+### Arbitrage équipe (24/11/2026)
+
+| Sujet | Décision retenue |
+|---|---|
+| Délai 3 semaines | **Hors CDC** — planning |
+| Priorités | **Tout en Must** |
+| Prévisions | **3 jours affichés** |
+| Multi-jours / ZO-19 | **Option la plus simple** : pas d'étapes ; recherche = aujourd'hui |
+| Pêche / ZO-22 | **Solution Thomas** : 2 sports (trail + pêche), spot unique |
+| Pluies / ZO-32 | **Historique constitué en interne** |
 
 ---
 
@@ -15,11 +27,11 @@ ZO-10 n'est pas reprise : elle est déjà tranchée par CR-001/Q23 (compte oblig
 | # | Question | Hypothèse actuelle | Réponse |
 |---|---|---|---|
 | ZO-01 | Identité et fonction du client, outils qu'il utilise aujourd'hui | Problème tel que formulé en §2 | Client : Maximilien (fonction non précisée). Outils utilisés aujourd'hui : les sites Windy et Randopéi |
-| ZO-02 | Qui valide le livrable, selon quels critères de recette | Scénarios de recette sur le panel pilote, soumis au client avant le 30/11/2026 | OK |
-| ZO-03 | Échéance | Client : 14/12/2026 ; jalon interne : 09/12/2026 | OK |
-| ZO-18 | Qui paie un hébergement après la démo locale | Aucun hébergement payant dans le délai ; décision du client après la démo | OK |
+| ZO-02 | Qui valide le livrable, selon quels critères de recette | Scénarios de recette sur le panel pilote, soumis au client avant le 30/11/2026 | OK pour les **scénarios de recette sur le panel pilote**. La **date** d'échéance est **hors CDC** (planning). |
+| ZO-03 | Échéance | Client : 14/12/2026 ; jalon interne : 09/12/2026 | **Hors CDC.** Les dates restent dans le planning projet uniquement. |
+| ZO-18 | Qui paie un hébergement après la démo locale | Aucun hébergement payant dans le délai ; décision du client après la démo | OK — aucun hébergement payant pour la démo locale ; décision client après la démo. *(Sans date dans le CDC.)* |
 | ZO-30 | Nom « MeteoSport » | Nom provisoire, à valider | Nom « MeteoSport » validé |
-| ZO-35 | Faisabilité de 20 Must en 3 semaines à 3 | Charge chiffrée avant présentation ; arbitrage des Must avec le client si dépassement | OK |
+| ZO-35 | Faisabilité de 20 Must en 3 semaines à 3 | Charge chiffrée avant présentation ; arbitrage des Must avec le client si dépassement | **Hors CDC.** Charge et calendrier traités au **planning**. Le CDC fixe le besoin en Must, pas la faisabilité calendaire. |
 
 ## Trail
 
@@ -31,7 +43,7 @@ ZO-10 n'est pas reprise : elle est déjà tranchée par CR-001/Q23 (compte oblig
 | ZO-07 | Qui fournit les seuils de sécurité par sentier | L'équipe propose pour les 3 parcours pilotes, le client valide | OK |
 | ZO-09 | VMA inconnue ou profil incomplet | Allure de référence par défaut, signalée ; temps et quantités personnalisés seulement avec profil complet | OK |
 | ZO-17 | Critères de météo « idéale » pour un sentier | Verdict à 3 niveaux (favorable, défavorable, à risque) : règles du sentier + grille générale | OK |
-| ZO-19 | Heures de passage sur plusieurs jours | Étapes journalières, une heure de départ par étape | OK |
+| ZO-19 | Heures de passage sur plusieurs jours | Étapes journalières, une heure de départ par étape | **Simplifié (arbitrage 24/11) :** pas de parcours multi-jours ni d'étapes. Recherche / recommandation = **aujourd'hui**. Prévisions météo **affichées sur 3 jours**. Heures de passage estimées sur la journée du trajet uniquement. |
 | ZO-20 | Vigilances officielles et fermetures générales | Alerte prioritaire, aucune sortie jugée favorable | OK |
 | ZO-21 | Aucun itinéraire valide | Message indiquant la contrainte bloquante | OK, et proposer un trail proche réalisable |
 | ZO-29 | Météo des deux passages en aller-retour | Chaque passage affiché séparément | OK |
@@ -41,11 +53,11 @@ ZO-10 n'est pas reprise : elle est déjà tranchée par CR-001/Q23 (compte oblig
 
 | # | Question | Hypothèse actuelle | Réponse |
 |---|---|---|---|
-| ZO-11 | Réglementation requin / chasse sous-marine, zones à exclure | Aucune recommandation de chasse sous-marine sans alerte réglementaire | OK |
+| ZO-11 | Réglementation requin / chasse sous-marine, zones à exclure | Aucune recommandation de chasse sous-marine sans alerte réglementaire | OK via **alertes génériques** rattachées aux spots de pêche (pas de pratique distincte hardcodée). Aligné AMB-17 / AMB-18 / INC-07. |
 | ZO-15 | Sources gratuites houle, marées, solunaire | Critère sans source retiré du calcul, retrait signalé | OK |
-| ZO-22 | Choix de la pratique, classement sur 2 sports ou 3 pratiques | Choix à la recherche ; classement sur 3 pratiques, exclusion possible | OK |
+| ZO-22 | Choix de la pratique, classement sur 2 sports ou 3 pratiques | Choix à la recherche ; classement sur 3 pratiques, exclusion possible | **Solution Thomas :** **2 sports** seulement — trail (inclut randonneurs) et pêche. Entité unique **« Spot de pêche »** (GPS précis), **sans** sous-techniques ni 3ᵉ pratique. Classement des sports favoris sur ces 2 types. |
 | ZO-23 | Sentiers évalués dans l'arbitrage ; tout est mauvais | Sentiers pilotes proches du départ ; si tout est défavorable, aucune sortie recommandée | OK |
-| ZO-32 | Source gratuite d'historique de pluie (24-48 h) | Même traitement que ZO-15 | OK. Si aucune source gratuite n'existe, constituer l'historique en conservant les données des appels aux sources météo |
+| ZO-32 | Source gratuite d'historique de pluie (24-48 h) | Même traitement que ZO-15 | **Constitution d'historique en interne :** conserver les données des appels aux sources météo gratuites pour alimenter le critère « pluies récentes ». Pas d'historique météo affiché à l'utilisateur (INC-05). |
 | ZO-34 | Le créneau de pêche inclut-il le trajet | Créneau = temps sur place, trajet en plus | OK |
 
 ## Compte, données, RGPD

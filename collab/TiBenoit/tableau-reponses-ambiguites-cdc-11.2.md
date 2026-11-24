@@ -8,6 +8,17 @@
 * Compte rendu d'entretien : [cr-001.md](file:///home/thomaz/Documents/project/Expernet/MeteoSport/tdd/docs/cr/cr-001.md)
 * Statut global : **100 % des ambiguïtés résolues et tranchées**
 
+### Arbitrage équipe (24/11/2026) — alignement transversal
+
+| Sujet | Décision retenue |
+|---|---|
+| Délai 3 semaines | **Hors CDC** — planning uniquement |
+| Priorités | **Tout en Must** (y compris suggestion par distance `REQ-010`) |
+| Prévisions | **3 jours affichés** (`AMB-07`) |
+| Multi-jours | **Option la plus simple** : recherche = aujourd'hui ; pas d'étapes multi-jours |
+| Pêche | **Solution Thomas** confirmée : spot unique GPS, pas de sous-techniques |
+| Pluies récentes | **Historique constitué en interne** via les appels météo |
+
 ---
 
 ## 1. Contexte et Principes Directeurs d'Arbitrage
@@ -15,9 +26,10 @@
 La section 11.2 du Cahier des charges v1 recensait **28 ambiguïtés** (`AMB-01` à `AMB-28`) en attente de clarification client ou d'arbitrage de conception. Ce document consigne formellement les réponses apportées par Thomas (TiBenoit), les décisions d'architecture validées et leurs impacts directs sur le CDC et l'implémentation du MVP.
 
 ### Principes directeurs issus de ces arbitrages :
-1. **Faisabilité stricte sous 3 semaines (MVP 09/12/2026 - 14/12/2026) :**
+1. **Cadre produit (sans calendrier dans le CDC) :**
    * **Zéro coût récurrent :** aucune source ni API payante autorisée (`AMB-26`).
-   * **PWA connectée obligatoire :** aucun mode hors-ligne lourd/complexe à développer ; connexion active requise (`AMB-23`). Le relais terrain hors-ligne repose sur l'export du fichier `.gpx` (`AMB-19`) lisible sur montre ou GPS autonome.
+   * **PWA connectée obligatoire :** aucun mode hors-ligne lourd/complexe ; connexion active requise (`AMB-23`). Le relais terrain hors-ligne repose sur l'export `.gpx` (`AMB-19`).
+   * **Délai / jalons :** hors CDC, gérés au planning (arbitrage équipe 24/11).
 2. **Architecture de données maîtrisée & Données fermées :**
    * Les sentiers officiels balisés sont seedés en interne par l'administrateur (`AMB-20`). L'application n'a pas de dépendance critique à une API cartographique temps-réel instable.
    * Les spots de pêche sont stockés avec des coordonnées GPS précises pour calcul de distance spatiale (`AMB-05`), sans distinction inutile des techniques de pêche (`AMB-06`).
@@ -36,13 +48,13 @@ La section 11.2 du Cahier des charges v1 recensait **28 ambiguïtés** (`AMB-01`
 
 | # | Constat / Question du CDC v1 | Source CDC / CR | Réponse apportée | Décision & Impact Fonctionnel / Technique | Statut |
 |---|---|---|---|---|:---:|
-| **AMB-01** | « Une suggestion de trace d'environ 40/50 km » et « une trace sur mesure par rapport aux tracés de rando connus » décrivent une recherche **par distance**. Le parcours utilisateur, lui, demande **un départ et une arrivée**. S'agit-il de deux modes de recherche ? | `CR-001/§1` | *« Oui il y a deux modes de recherche, il y a le mode de recherche par Distance et par départ/arrivée »* | **Deux modes confirmés :**<br>1. Recherche par couple **Départ / Arrivée** (mode prioritaire, Must, `REQ-001`).<br>2. Recherche / suggestion **par Distance** cible (Should, `REQ-010`). L'UI prévoit un sélecteur de mode. | ✅ Tranché |
+| **AMB-01** | « Une suggestion de trace d'environ 40/50 km » et « une trace sur mesure par rapport aux tracés de rando connus » décrivent une recherche **par distance**. Le parcours utilisateur, lui, demande **un départ et une arrivée**. S'agit-il de deux modes de recherche ? | `CR-001/§1` | *« Oui il y a deux modes de recherche, il y a le mode de recherche par Distance et par départ/arrivée »* | **Deux modes confirmés, tous deux Must :**<br>1. Recherche par couple **Départ / Arrivée** (`REQ-001`).<br>2. Recherche / suggestion **par Distance** cible (`REQ-010`). L'UI prévoit un sélecteur de mode. *(Arbitrage équipe 24/11 : tout en Must.)* | ✅ Tranché |
 | **AMB-02** | À « Que voulez-vous faire aujourd'hui ? », est-ce l'utilisateur qui choisit l'activité ou l'application qui la recommande ? « Aujourd'hui » limite-t-il la recherche au jour même, alors que les prévisions portent sur les prochains jours ? | `CR-001/§1, Q11, Q13` | *« Limite la recherche à aujourd'hui »* | **Recherche immédiate à J :** La suggestion active et la recommandation d'activité directe sont strictement bornées à la journée en cours (« Aujourd'hui »). La consultation des prévisions météo sur les jours suivants (`AMB-07`) reste accessible pour consultation / préparation. | ✅ Tranché |
 | **AMB-03** | « Difficulté » : cotation officielle du sentier, ou difficulté ressentie selon le niveau de l'utilisateur (« itinéraires selon le niveau ») ? | `CR-001/§1` | *« Cotation officielle, selon ce qui est défini par l'admin »* | **Difficulté objective officielle :** La difficulté affichée correspond à la cotation officielle configurée en base par l'administrateur (`difficulty_level`). L'impact du profil utilisateur s'applique uniquement sur le temps de parcours estimé (`REQ-005`). | ✅ Tranché |
 | **AMB-04** | Le trajet conseillé est-il toujours affiché, ou seulement quand une règle est déclenchée ? Peut-il proposer « un autre secteur » (question Q16) que celui choisi ? | `CR-001/Q16, Q34` | *« Le trajet conseillé est le trajet selon ce que l'user choisit de voir selon les filtres (facile, difficile,...), oui on peut proposer un autre secteur si disponible. Attention les règles imposées sur les sentiers seront généralement des règles de désactivation : par défaut un sentier sera disponible, si des règles (dégradé en cas de pluie, fermé...) sont actives il ne sera pas proposé en sentier conseillé mais sera toujours proposé avec alerte »* | **Règles de désactivation & Déclenchement :**<br>1. Le trajet conseillé tient compte des filtres utilisateur et peut explorer un autre secteur si disponible.<br>2. Les règles de sécurité fonctionnent par **désactivation** : un sentier est actif par défaut. Si une règle se déclenche (pluie forte, fermeture), le sentier est exclu du trajet conseillé.<br>3. Le trajet choisi par l'utilisateur conserve les sentiers sélectionnés mais affiche une alerte visible (`REQ-004`, `REQ-008`). | ✅ Tranché |
 | **AMB-05** | « Meilleure côte » : de quelle échelle parle-t-on ? Une façade de l'île, une commune (« Saint-Paul », Q12) ou un spot précis ? | `CR-001/§1, Q09, Q12` | *« Selon les spots disponibles dans la zone définie. Les spots seront enregistrés avec un point GPS précis pour des calculs de distance depuis la base de données »* | **Spots géolocalisés précis :** Les spots de pêche sont enregistrés en base avec leurs coordonnées GPS précises (latitude/longitude). Le calcul de recommandation s'appuie sur la distance géographique depuis le point de départ de l'utilisateur (`REQ-009`, `REQ-026`). | ✅ Tranché |
 | **AMB-06** | La question Q08 cite le surfcasting et le lancer comme formes de pêche du bord. Toutes les formes de pêche du bord sont-elles concernées ? | `CR-001/Q08` | *« Pas de précision pour nous ici, on donnera spot de pêche sans précision du type de pêche »* | **Catégorie unique « Spot de pêche » :** Aucune segmentation complexe par sous-technique de pêche (lancer, surfcasting, etc.). L'application gère de façon uniforme l'entité `Spot de pêche du bord`, simplifiant les modèles de données et l'IHM. | ✅ Tranché |
-| **AMB-07** | « Prochains jours » : combien de jours de prévision ? | `CR-001/Q13` | *« 3 jours de prévision »* | **Horizon fixé à J+3 :** La météo horaire et journalière couvre la journée courante et les deux jours suivants (72 heures). Cadrage ferme pour les requêtes vers l'API météo et le cache interne. | ✅ Tranché |
+| **AMB-07** | « Prochains jours » : combien de jours de prévision ? | `CR-001/Q13` | *« 3 jours de prévision »* | **3 jours de prévision à afficher :** météo horaire et journalière sur J à J+2 (72 h), selon les infos fournies par la source gratuite. Sert aussi de borne au cache et aux requêtes API. | ✅ Tranché |
 | **AMB-08** | Quel tracé est exporté en `.gpx` : celui choisi par l'utilisateur ou le trajet conseillé ? Qui « valide » l'itinéraire ? | `CR-001/Q19` | *« Celui choisi par l'user »* | **Tracé retenu par l'utilisateur :** L'export `.gpx` (`REQ-011`) génère le fichier du tracé final sélectionné et validé par l'utilisateur (tracé initial ou alternative conseillée retenue). | ✅ Tranché |
 | **AMB-09** | Le panel pilote est cité avec « notamment » : la liste est-elle fermée ? | `CR-001/Q40` | *« Okay on garde cela »* | **Liste fermée validée :** Le panel pilote pour la démonstration et les tests est strictement restreint aux 3 parcours définis :<br>1. La Possession → Mafate<br>2. Roche Écrite<br>3. Piton des Neiges. | ✅ Tranché |
 | **AMB-10** | Les « alertes » gérées par l'administrateur sont-elles des alertes sur les sentiers, la météo ou le littoral ? | `CR-001/Q42` | *« L'administrateur pourra définir des alertes sur chaque type de zone définie (sentier, zone de pêche), le but étant que sur la page de ces éléments on y voit l'alerte si déclarée »* | **Alertes ciblées par entité :** L'administrateur peut rattacher un message d'alerte à un sentier ou à une zone/spot de pêche. L'alerte est affichée contextuellement sur la vue détaillée de l'élément concerné (`REQ-022`). | ✅ Tranché |
@@ -54,7 +66,7 @@ La section 11.2 du Cahier des charges v1 recensait **28 ambiguïtés** (`AMB-01`
 | **AMB-16** | « Conditions équivalentes » (Q33) : à partir de quel écart deux scores sont-ils considérés comme équivalents ? | `CR-001/Q33` | *« Seuil paramétrable »* | **Seuil d'équivalence en configuration :** La tolérance d'écart entre scores pour considérer deux activités comme équivalentes est une constante configurable dans l'application (`SCORE_TOLERANCE_THRESHOLD`), sans logique codée en dur. | ✅ Tranché |
 | **AMB-17** | Q32 prévoit l'alerte Réserve marine « pour toute activité sur la côte ouest ». Concerne-t-elle seulement la pêche et la chasse sous-marine, ou aussi un parcours trail sur le littoral ouest ? | `CR-001/Q32` | *« Seulement pour la pêche, mais on ne va pas déclarer une alerte spécifique pour cela, le but étant que pour un type d'activité on ait la possibilité de définir un ou plusieurs types d'alerte temporaire ou indéterminée »* | **Alerte générique pour la pêche :** L'alerte Réserve marine ne concerne que la pêche. Elle ne fait pas l'objet d'un code métier ad hoc : elle est administrée via le système générique d'alertes par zone/activité avec durée indéterminée. | ✅ Tranché |
 | **AMB-18** | L'alerte requin vise-t-elle aussi certaines formes de pêche du bord exposées (pieds dans l'eau, platier) ? Q10 ne limite pas le requin à une pratique. | `CR-001/Q10` | *« Même réponse que précédent »* | **Alerte requin via moteur générique :** Même règle qu'`AMB-17`. L'alerte requin est créée comme une alerte administrative paramétrable sur les spots ou secteurs maritimes pertinents, évitant les règles rigides dans le code applicatif. | ✅ Tranché |
-| **AMB-19** | Q06 : le client répond « le trail, avec le tracé GPX », alors que la question opposait « le GPX sur mesure » aux autres options. Cela peut désigner l'**export** d'un fichier `.gpx` ou la **trace sur mesure** (suggestion par distance, REQ-010). | `CR-001/§1, Q06, Q19` | *« L'export du fichier GPX »* | **Export standardisé GPX :** « Tracé GPX » qualifie l'exportation du fichier `.gpx` standard (`REQ-011`, Must) exploitable sur montre de sport/GPS. La trace sur mesure par distance demeure un mode de recherche distinct (`AMB-01`, `REQ-010`, Should). | ✅ Tranché |
+| **AMB-19** | Q06 : le client répond « le trail, avec le tracé GPX », alors que la question opposait « le GPX sur mesure » aux autres options. Cela peut désigner l'**export** d'un fichier `.gpx` ou la **trace sur mesure** (suggestion par distance, REQ-010). | `CR-001/§1, Q06, Q19` | *« L'export du fichier GPX »* | **Export standardisé GPX :** « Tracé GPX » = export `.gpx` (`REQ-011`, Must). La suggestion par distance reste un mode distinct (`AMB-01`, `REQ-010`, **Must**). | ✅ Tranché |
 | **AMB-20** | « Sentier officiel balisé » n'est défini nulle part : quelle liste fait foi ? « Officiel » et « ouvert » sont-ils distincts ? La source libre du réseau (Q28) permet-elle de repérer le balisage ? | `CR-001/Q16, Q28` | *« Les sentiers seront importés par les admins via les seed, on référencera uniquement ces sentiers dans l'app, pour les mises à jour des données les services API devront faire la liaison avec nos sentiers en interne »* | **Graphe interne via Seeds & Mapping API :** L'application s'appuie sur une base de sentiers officiels fermée, injectée en base par script de seed. Les services externes (météo, arrêtés éventuels) font la correspondance via des identifiants/coordonnées internes. Pas de dépendance directe à une API tierce pour la topologie des sentiers. | ✅ Tranché |
 | **AMB-21** | « Côte ouest » n'est pas délimitée : quelles communes déclenchent l'alerte Réserve marine ? | `CR-001/Q32` | *« Voir réponse alerte ci-dessus »* | **Pas de découpage géographique rigide en dur :** L'administrateur positionne les alertes directement sur les zones ou spots de pêche situés sur la côte Ouest (`AMB-10`, `AMB-17`). Aucun polygone géographique lourd à maintenir dans le code. | ✅ Tranché |
 | **AMB-22** | « Balises » dans le découpage météo : s'agit-il de stations météo ou du balisage des sentiers ? | `CR-001/Q38` | *« Station météo »* | **Confirmation stations météo :** « Balises » désigne des stations de mesure météorologique géolocalisées servant de référence météo pour les zones découpées (`REQ-108`). | ✅ Tranché |
@@ -74,8 +86,8 @@ flowchart TD
     subgraph UI_UX["Interface & Expérience Utilisateur (PWA)"]
         A["PWA 100% connectée (AMB-23)"]
         B["Panneaux de recherche dédiés (AMB-15)"]
-        C["Mode Départ/Arrivée (Must) & Mode Distance (Should) (AMB-01)"]
-        D["Recherche du jour 'Aujourd'hui' (AMB-02)"]
+        C["Mode Départ/Arrivée & Distance (tous Must) (AMB-01)"]
+        D["Recherche 'Aujourd'hui' + météo 3j affichée (AMB-02, AMB-07)"]
     end
 
     subgraph TRAILS["Sentiers & Routage (Trail & Rando)"]
@@ -138,9 +150,10 @@ flowchart TD
   Les alertes s'affichent dynamiquement sur les fiches des entités concernées.
 
 ### 3.4. Données, Météo & Coûts
-* **Horizon météo (`AMB-07`) :** Limité à 3 jours (J à J+2). Les requêtes API gratuites sont réduites, facilitant la mise en cache horaire.
+* **Horizon météo affiché (`AMB-07`) :** 3 jours (J à J+2). La recherche / recommandation reste bornée à **aujourd'hui** (`AMB-02`) — pas de multi-jours ni d'étapes.
+* **Historique de pluie (interne) :** non affiché comme historique utilisateur ; constitué **en interne** en conservant les données des appels aux sources météo gratuites (aligné ZO-32 / INC-05).
 * **Stations météo (`AMB-22`) :** Les « balises » du CR désignent les stations météorologiques réelles utilisées pour mailler l'île.
-* **Contrainte de budget (`AMB-26`) :** Zéro source payante. En l'absence d'API marine gratuite fiable pour la houle ou les marées sur certains spots, un avertissement transparent est affiché plutôt que de souscrire un abonnement payant.
+* **Contrainte de budget (`AMB-26`) :** Zéro source payante. En l'absence d'API marine gratuite fiable pour la houle ou les marées, avertissement transparent plutôt qu'abonnement.
 
 ### 3.5. Authentification, Profil et PWA
 * **Profil utilisateur (`AMB-28`) :** La saisie de la VMA, du poids, de la taille et le consentement RGPD sont exigés dès la création de compte. Pas d'accès au profil sans inscription.
@@ -157,8 +170,9 @@ Ce tableau synthétise les modifications à reporter directement dans le [cahier
 |---|---|---|---|:---:|
 | **Tableau 11.2** | §11.2 | `AMB-01` à `AMB-28` avec statut « en attente » | Remplacer « en attente » par **« Tranché »** avec les décisions du présent document | `AMB-01` à `AMB-28` |
 | **Personas / Cible** | §5 | Randonneurs exclus ou en attente d'arbitrage | Randonneurs intégrés comme public cible explicite aux côtés des traileurs | `AMB-14` |
-| **Modes de recherche** | §6, §9 | Recherche par départ/arrivée seule en Must | Deux modes formalisés : Départ/Arrivée (Must, `REQ-001`) et Par distance (Should, `REQ-010`) | `AMB-01` |
-| **Périmètre temporel** | §6, §9 | Horizon multi-jours ambigu | Recherche du jour bornée à « Aujourd'hui » ; consultation météo à 3 jours max | `AMB-02`, `AMB-07` |
+| **Modes de recherche** | §6, §9 | Recherche par départ/arrivée seule en Must | Deux modes formalisés, **tous deux Must** : Départ/Arrivée (`REQ-001`) et Par distance (`REQ-010`) | `AMB-01` |
+| **Périmètre temporel** | §6, §9 | Horizon multi-jours ambigu | Recherche = « Aujourd'hui » ; **prévisions affichées sur 3 jours** ; pas d'étapes multi-jours | `AMB-02`, `AMB-07` |
+| **Délai / jalons** | §1, §7, §11 | Dates MVP et charge 3 semaines dans le CDC | **Hors CDC** → planning | arbitrage 24/11 |
 | **Routage et sécurité** | §9 | Trajet conseillé formulé de façon générique | Formalisation des règles de **désactivation** et proposition d'un autre secteur si besoin | `AMB-04`, `AMB-13`, `AMB-24` |
 | **Spots de pêche** | §9 | Secteurs côtiers à l'échelle de la commune | Spots géolocalisés précis par coordonnées GPS en BDD ; type unique « Spot de pêche » | `AMB-05`, `AMB-06` |
 | **Système d'alertes** | §8, §9 | Règles spécifiques Réserve marine (`R-14`) et requin (`R-15`) codées en dur | Remplacement par un modèle d'alertes générique paramétrable (temporaires ou indéterminées) | `AMB-10`, `AMB-12`, `AMB-17`, `AMB-18`, `AMB-21` |
