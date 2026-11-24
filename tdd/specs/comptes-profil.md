@@ -13,8 +13,11 @@
 ### Règle
 
 > Toute personne de 15 ans ou plus peut créer un compte. L'inscription n'aboutit
-> qu'après acceptation des conditions d'utilisation, et comprend le recueil du
+> qu'après acceptation des conditions d'utilisation (CGU), et comprend le recueil du
 > consentement aux données de forme physique ainsi que le classement des sports favoris.
+> Les CGU précisent que l'application est une aide à la décision indicative, qu'elle
+> ne remplace pas les bulletins officiels, et contiennent une clause de
+> non-responsabilité en cas d'accident (R-14).
 
 ### Portée
 
@@ -24,7 +27,7 @@
 - Ne couvre pas la saisie des données de profil → `SPEC-AUTH-06`.
 - Ne couvre pas les règles de robustesse et de conservation du mot de passe → `SPEC-AUTH-04`.
 - Ne couvre pas la création des comptes administrateurs, faite par l'équipe → `SPEC-ADMIN-nn`.
-- Ne couvre pas la rédaction juridique des CGU et de la politique de confidentialité (modèle fourni par l'équipe, validé par le client : REQ-020 ; `ZO-12`, à valider à la recette selon CR-001/§6) → hors périmètre.
+- Ne couvre pas la rédaction juridique des CGU et de la politique de confidentialité : modèle fourni par l'équipe ; le client le fait valider et en porte la responsabilité (REQ-020 ; modèle CGU / confidentialité à faire valider à la recette, CR-001/§6) → hors périmètre. La présence de l'avertissement et de la clause de R-14 dans les CGU présentées reste couverte (AC-7).
 
 ### Scénarios nominaux
 
@@ -62,15 +65,16 @@ Scénario : CGU non acceptées
 | 1 | Le visiteur déclare avoir moins de 15 ans | Inscription refusée, message expliquant la limite d'âge ; aucune donnée conservée |
 | 2 | Identifiant déjà utilisé par un autre compte | Inscription refusée avec un message neutre, sans révéler d'information sur le compte existant au-delà du nécessaire |
 | 3 | Le visiteur abandonne le parcours avant la fin | Aucun compte créé, aucune donnée conservée |
-| 4 | Le visiteur ne classe pas ses sports favoris | Classement par défaut paramétrable appliqué et signalé ; modifiable ensuite (`SPEC-AUTH-07`) |
+| 4 | Le visiteur ne classe pas ses sports favoris | Inscription refusée : le classement est une étape obligatoire de l'inscription (REQ-017) ; un message invite à classer les deux sports. Modifiable ensuite (`SPEC-AUTH-07`) |
 | 5 | Le visiteur veut lire les CGU ou la politique de confidentialité avant d'accepter | Les deux documents sont consultables depuis le parcours sans perdre la saisie en cours |
 | 6 | Tentative d'accès à une page de l'application sans compte | Redirection vers la connexion ou l'inscription (R-16) |
+| 7 | Mot de passe ne respectant pas la règle de robustesse (`SPEC-AUTH-04`) | Inscription refusée avec un message indiquant les critères attendus ; aucun compte créé |
 
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Mode de vérification des 15 ans : hypothèse retenue = attestation déclarative (case à cocher), distincte de l'âge du profil, qui reste facultatif. L'attestation est une condition d'éligibilité du compte et non une donnée de forme physique : elle est conservée avec le compte et n'est pas touchée par la modification, l'effacement de l'âge ou le retrait du consentement (`SPEC-AUTH-05`, `SPEC-AUTH-06`). À confirmer avec le client.
 - *24/11/2026* — Nature de l'identifiant : hypothèse retenue = adresse électronique, nécessaire à la réinitialisation du mot de passe (`SPEC-AUTH-03`). Vérification de l'adresse à l'inscription : non demandée, non prévue.
-- *24/11/2026* — Classement par défaut si l'utilisateur ne classe pas ses sports : hypothèse retenue = trail puis pêche, paramétrable.
+- *24/11/2026* — Modification de l'adresse électronique (identifiant) par un utilisateur connecté : non traitée par le CDC (REQ-015 ne la cite pas). Question à poser au client ; aucune règle posée en attendant.
 
 ### Critères d'acceptation
 
@@ -79,7 +83,9 @@ Scénario : CGU non acceptées
 - [ ] AC-3 — Une déclaration de moins de 15 ans bloque l'inscription (`CASE-AUTH-03`).
 - [ ] AC-4 — Un identifiant déjà utilisé est refusé (`CASE-AUTH-04`).
 - [ ] AC-5 — Un refus du consentement n'empêche pas l'inscription et aucune donnée de forme n'est enregistrée (`CASE-AUTH-05`).
-- [ ] AC-6 — La date d'acceptation des CGU, l'attestation d'âge et le choix de consentement sont enregistrés avec le compte (`CASE-AUTH-06`).
+- [ ] AC-6 — La date d'inscription, la date d'acceptation des CGU, l'attestation d'âge et le choix de consentement sont enregistrés avec le compte (`CASE-AUTH-06`).
+- [ ] AC-7 — Les CGU présentées à l'inscription contiennent l'avertissement « aide à la décision indicative, ne remplace pas les bulletins officiels » et la clause de non-responsabilité en cas d'accident (R-14) (`CASE-AUTH-07`).
+- [ ] AC-8 — Sans classement des deux sports favoris, aucun compte n'est créé (REQ-017) (`CASE-AUTH-08`).
 
 ### Revue IA
 
@@ -105,11 +111,11 @@ Scénario : CGU non acceptées
 
 - Couvre la connexion par identifiant et mot de passe, la déconnexion et le maintien de la session.
 - Couvre l'interdiction de toute consultation sans compte (R-16).
-- Couvre la disponibilité du profil et du classement des sports sur plusieurs appareils (REQ-015 ; `ZO-24`, tranchée et validée par le client, CR-001/§5.2 n° 17 : « profil et classement des sports seulement »).
+- Couvre la disponibilité du profil et du classement des sports sur plusieurs appareils (REQ-015 ; décision validée CR-001/§5.2 n° 17 : « profil et classement des sports seulement »).
 - Ne couvre pas le blocage après échecs → `SPEC-AUTH-04`.
 - Ne couvre pas le mot de passe oublié → `SPEC-AUTH-03`.
 - Ne couvre pas l'accès à l'espace d'administration → `SPEC-ADMIN-nn`.
-- Ne couvre pas la synchronisation des recherches, itinéraires ou historiques de sortie → hors périmètre (`ZO-24`, tranchée : seuls profil et classement sont retrouvés).
+- Ne couvre pas la synchronisation des recherches, itinéraires ou historiques de sortie → hors périmètre (REQ-015 ; CR-001/§5.2 n° 17 : seuls profil et classement sont retrouvés).
 
 ### Scénarios nominaux
 
@@ -146,14 +152,17 @@ Scénario : Déconnexion
 
 - *24/11/2026* — Durée de validité d'une session sans activité : à paramétrer, valeur à proposer par l'équipe.
 - *24/11/2026* — Déconnexion de tous les appareils à la fois : non demandée, non prévue.
+- *24/11/2026* — Durée de conservation du profil et du classement conservés pour la reconnexion multi-appareils : ⚠ ZO-26 (REQ-015), à fixer par le client.
+- *24/11/2026* — Purge des données personnelles éventuellement conservées dans le navigateur à la déconnexion : non traitée par le CDC. Point à arbitrer par l'équipe avec l'architecture (`SPEC-ARCH-nn`).
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Avec des identifiants corrects, l'utilisateur accède à l'application (`CASE-AUTH-07`).
-- [ ] AC-2 — Identifiant inconnu et mot de passe erroné produisent le même message (`CASE-AUTH-08`).
-- [ ] AC-3 — Aucune page fonctionnelle n'est accessible sans session (`CASE-AUTH-09`).
-- [ ] AC-4 — Après déconnexion, les pages internes ne sont plus accessibles (`CASE-AUTH-10`).
-- [ ] AC-5 — Le profil et le classement modifiés sur un appareil sont retrouvés sur un autre (`CASE-AUTH-11`).
+- [ ] AC-1 — Avec des identifiants corrects, l'utilisateur accède à l'application (`CASE-AUTH-09`).
+- [ ] AC-2 — Identifiant inconnu et mot de passe erroné produisent le même message (`CASE-AUTH-10`).
+- [ ] AC-3 — Aucune page fonctionnelle n'est accessible sans session (`CASE-AUTH-11`).
+- [ ] AC-4 — Après déconnexion, les pages internes ne sont plus accessibles (`CASE-AUTH-12`).
+- [ ] AC-5 — Le profil et le classement modifiés sur un appareil sont retrouvés sur un autre (`CASE-AUTH-13`).
+- [ ] AC-6 — Une session expirée renvoie vers la connexion sans afficher de donnée d'un autre compte (`CASE-AUTH-14`).
 
 ### Revue IA
 
@@ -214,14 +223,17 @@ Scénario : Demande pour une adresse inconnue
 
 - *24/11/2026* — Changement de mot de passe depuis le profil connecté : REQ-015 ne cite que la création du compte, la connexion, la déconnexion et la réinitialisation du mot de passe ; CR-001/Q23 ne précise rien de plus. Question à poser au client : attend-il aussi cette fonction ? Si oui, elle fera l'objet d'une spec distincte.
 - *24/11/2026* — Durée de validité du lien : à paramétrer, valeur à proposer par l'équipe.
+- *24/11/2026* — Mécanisme de réinitialisation (lien à usage unique, durée limitée, seul le dernier lien valable, réponse identique pour une adresse inconnue) : hypothèse de sécurité de l'équipe issue de REQ-114 ; REQ-015 dit seulement que l'utilisateur « peut réinitialiser son mot de passe ». À valider à la recette.
+- *24/11/2026* — Levée du blocage (`SPEC-AUTH-04`) par une réinitialisation réussie (cas limite 5) : hypothèse de conception de l'équipe, non prévue par REQ-114, retenue pour éviter qu'un tiers bloque durablement le titulaire du compte. À confirmer par le client.
 - *24/11/2026* — Envoi du lien pendant la démonstration en local (sans service payant) : moyen de réception de test à définir avec l'architecture (`SPEC-ARCH-nn`).
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Après réinitialisation, seul le nouveau mot de passe est accepté (`CASE-AUTH-12`).
-- [ ] AC-2 — La réponse est identique pour une adresse connue et inconnue (`CASE-AUTH-13`).
-- [ ] AC-3 — Un lien expiré ou déjà utilisé est refusé (`CASE-AUTH-14`).
-- [ ] AC-4 — Seul le dernier lien émis est valable (`CASE-AUTH-15`).
+- [ ] AC-1 — Après réinitialisation, seul le nouveau mot de passe est accepté (`CASE-AUTH-15`).
+- [ ] AC-2 — La réponse est identique pour une adresse connue et inconnue (`CASE-AUTH-16`).
+- [ ] AC-3 — Un lien expiré ou déjà utilisé est refusé (`CASE-AUTH-17`).
+- [ ] AC-4 — Seul le dernier lien émis est valable (`CASE-AUTH-18`).
+- [ ] AC-5 — Une réinitialisation réussie lève le blocage d'un compte bloqué après échecs (hypothèse, voir « Ce qui n'est pas défini ») (`CASE-AUTH-19`).
 
 ### Revue IA
 
@@ -233,15 +245,15 @@ Scénario : Demande pour une adresse inconnue
 
 ## SPEC-AUTH-04 — Sécurité des identifiants
 
-**Exigence :** REQ-114 (avec REQ-115 pour le paramétrage)
+**Exigence :** REQ-114
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
 ### Règle
 
-> Aucun mot de passe n'est conservé ni affiché en clair. Après un nombre paramétrable
-> d'échecs de connexion consécutifs, la connexion au compte est bloquée pendant une
-> durée paramétrable.
+> Aucun mot de passe n'est conservé ni affiché en clair. Après un nombre fixé
+> d'échecs de connexion consécutifs, la connexion au compte est temporairement bloquée
+> pendant une durée fixée (REQ-114 : « nombre d'échecs et durée à fixer »).
 
 ### Portée
 
@@ -285,16 +297,19 @@ Scénario : Mot de passe jamais conservé en clair
 
 ### Ce qui n'est pas défini
 
-- *24/11/2026* — Nombre d'échecs et durée du blocage (REQ-114 « à fixer ») : proposition 5 échecs, 15 minutes, paramétrables. À valider à la recette.
+- *24/11/2026* — Nombre d'échecs et durée du blocage (REQ-114 « à fixer ») : proposition 5 échecs, 15 minutes. À valider à la recette.
+- *24/11/2026* — Paramétrabilité du seuil et de la durée (AC-4) : choix d'architecture de l'équipe pour ne pas figer ces valeurs dans le code. REQ-115 ne les liste pas parmi les paramètres exigés ; ce n'est donc pas une exigence du CDC.
+- *24/11/2026* — Effet du blocage sur une session déjà ouverte sur un autre appareil : non traité par le CDC. Point à arbitrer ; en attendant, la spec ne bloque que les nouvelles tentatives de connexion.
 - *24/11/2026* — Règle de robustesse : proposition longueur minimale de 8 caractères. À valider.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Les mots de passe sont conservés sous forme non réversible (`CASE-AUTH-16`).
-- [ ] AC-2 — Le compte est bloqué au seuil d'échecs et débloqué après la durée paramétrée (`CASE-AUTH-17`).
-- [ ] AC-3 — Une connexion réussie remet le compteur à zéro (`CASE-AUTH-18`).
-- [ ] AC-4 — Modifier le seuil ou la durée dans le paramétrage change le comportement sans modifier l'application (`CASE-AUTH-19`).
-- [ ] AC-5 — Un mot de passe non conforme est refusé (`CASE-AUTH-20`).
+- [ ] AC-1 — Les mots de passe sont conservés sous forme non réversible (`CASE-AUTH-20`).
+- [ ] AC-2 — Le compte est bloqué au seuil d'échecs et débloqué après la durée paramétrée (`CASE-AUTH-21`).
+- [ ] AC-3 — Une connexion réussie remet le compteur à zéro (`CASE-AUTH-22`).
+- [ ] AC-4 — Modifier le seuil ou la durée dans le paramétrage change le comportement sans modifier l'application (choix d'architecture de l'équipe, hors REQ-115) (`CASE-AUTH-23`).
+- [ ] AC-5 — Un mot de passe non conforme est refusé (`CASE-AUTH-24`).
+- [ ] AC-6 — Le mot de passe n'apparaît dans aucun affichage, export ni journal (REQ-114) (`CASE-AUTH-25`).
 
 ### Revue IA
 
@@ -358,20 +373,23 @@ Scénario : Consultation de la politique de confidentialité
 | 5 | Calcul en cours d'affichage au moment du retrait | Les calculs suivants utilisent les valeurs par défaut |
 | 6 | Effacement de l'âge du profil (par retrait ou par l'utilisateur) | L'éligibilité du compte n'est pas remise en cause : elle repose sur l'attestation d'âge de l'inscription (`SPEC-AUTH-01`) |
 | 7 | Historique du consentement après retrait | Les dates d'octroi et de retrait sont conservées comme preuve du consentement ; ce ne sont pas des données de forme physique, R-13 ne les vise pas. Elles sont effacées avec le compte (`SPEC-AUTH-10`) |
+| 8 | L'utilisateur efface lui-même ses 4 données (`SPEC-AUTH-06`, cas limite 4) | Ne vaut pas retrait du consentement : le consentement reste actif et les champs restent saisissables. Seul le retrait explicite efface les données et rend les champs indisponibles (R-13) |
 
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Durée de conservation des données personnelles (ZO-26) : à fixer par le client. Elle s'applique aussi à l'historique du consentement (dates d'octroi et de retrait), conservé tant que le compte existe.
 - *24/11/2026* — Qualification RGPD de l'âge, du poids, de la taille et de la VMA en données de santé (ZO-33) : à trancher avec le client ; le consentement explicite est maintenu en attendant.
-- *24/11/2026* — Contenu de la politique de confidentialité : modèle fourni par l'équipe, validé par le client (REQ-020 ; `ZO-12`, à valider à la recette selon CR-001/§6).
+- *24/11/2026* — Contenu de la politique de confidentialité : modèle fourni par l'équipe, que le client fait valider (REQ-020 ; modèle à faire valider à la recette, CR-001/§6).
+- *24/11/2026* — Octroi du consentement après l'inscription (depuis le profil) et nouveau consentement après un retrait : R-13 et REQ-018 ne prévoient littéralement le recueil que « dans le parcours de création du compte ». Hypothèse de l'équipe, nécessaire pour qu'un utilisateur ayant refusé puisse un jour renseigner son profil. À confirmer par le client.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Le consentement n'est jamais pré-coché et sa date est enregistrée (`CASE-AUTH-21`).
-- [ ] AC-2 — Sans consentement, aucune donnée de forme ne peut être enregistrée (`CASE-AUTH-22`).
-- [ ] AC-3 — Le retrait efface les 4 données de forme et rétablit les valeurs par défaut signalées (`CASE-AUTH-23`).
-- [ ] AC-4 — Le retrait ne supprime ni le compte, ni l'attestation d'âge, ni le classement des sports, et sa date est enregistrée (`CASE-AUTH-24`).
-- [ ] AC-5 — La politique de confidentialité est consultable à l'inscription et depuis le compte (`CASE-AUTH-25`).
+- [ ] AC-1 — Le consentement n'est jamais pré-coché et sa date est enregistrée (`CASE-AUTH-26`).
+- [ ] AC-2 — Sans consentement, aucune donnée de forme ne peut être enregistrée (`CASE-AUTH-27`).
+- [ ] AC-3 — Le retrait efface les 4 données de forme et rétablit les valeurs par défaut signalées (`CASE-AUTH-28`).
+- [ ] AC-4 — Le retrait ne supprime ni le compte, ni l'attestation d'âge, ni le classement des sports, et sa date est enregistrée (`CASE-AUTH-29`).
+- [ ] AC-5 — La politique de confidentialité est consultable à l'inscription et depuis le compte (`CASE-AUTH-30`).
+- [ ] AC-6 — Un consentement donné depuis le profil après l'inscription rend les champs saisissables et sa date est enregistrée (hypothèse, voir « Ce qui n'est pas défini ») (`CASE-AUTH-31`).
 
 ### Revue IA
 
@@ -383,7 +401,7 @@ Scénario : Consultation de la politique de confidentialité
 
 ## SPEC-AUTH-06 — Profil facultatif et valeurs par défaut
 
-**Exigence :** REQ-016, REQ-115 (avec règles R-17, R-20)
+**Exigence :** REQ-016, REQ-115 (avec règle R-17)
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -399,6 +417,7 @@ Scénario : Consultation de la politique de confidentialité
 - Couvre le contrôle des plages plausibles fixées par l'équipe (REQ-016).
 - Couvre la fourniture aux autres domaines de la valeur effective (saisie ou par défaut) et de son origine.
 - Ne couvre pas l'usage de ces valeurs dans les calculs (temps, eau, nourriture, niveau) → `SPEC-CALC-nn`.
+- Ne couvre pas la déduction du niveau à partir de la VMA par paliers paramétrables (R-20, REQ-115) → `SPEC-CALC-nn`.
 - Ne couvre pas le paramétrage technique des valeurs par défaut → `SPEC-ARCH-nn`.
 - Ne couvre pas d'autres données de profil (Q20) ni l'apprentissage après sortie (Q22) → hors périmètre.
 
@@ -432,7 +451,7 @@ Scénario : Profil partiellement renseigné
 | 2 | Valeur non numérique ou négative | Refusée avec message |
 | 3 | Valeur décimale (ex. VMA 13,5) | Acceptée pour le poids, la taille et la VMA ; âge en années entières |
 | 4 | L'utilisateur efface une donnée déjà saisie | Donnée supprimée, valeur par défaut appliquée et signalée |
-| 5 | Les 4 données absentes | Tous les calculs en valeurs par défaut ; un seul avertissement global suffit |
+| 5 | Les 4 données absentes | Tous les calculs en valeurs par défaut ; un seul avertissement global suffit. Si l'utilisateur les a effacées lui-même, le consentement reste actif (`SPEC-AUTH-05`, cas limite 8) |
 | 6 | Valeur par défaut modifiée dans le paramétrage | Les calculs suivants des utilisateurs sans saisie utilisent la nouvelle valeur |
 | 7 | Âge du profil saisi sous 15 ans | Refusé comme hors plage ; l'attestation d'âge et le compte restent inchangés |
 | 8 | Âge du profil effacé | Seule la valeur de calcul est concernée ; l'éligibilité du compte (attestation, `SPEC-AUTH-01`) ne change pas |
@@ -440,14 +459,14 @@ Scénario : Profil partiellement renseigné
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Plages plausibles (REQ-016, fixées par l'équipe) : proposition âge 15–100 ans, poids 30–250 kg, taille 120–230 cm, VMA 6–25 km/h. À valider à la recette.
-- *24/11/2026* — Valeurs par défaut (paramétrables, REQ-115) : à proposer avec les règles de calcul (`SPEC-CALC-nn` ; `ZO-05`, règles de calcul à valider à la recette selon CR-001/§6).
+- *24/11/2026* — Valeurs par défaut (paramétrables, REQ-115) : à proposer avec les règles de calcul (`SPEC-CALC-nn` ; R-05 ; règles de calcul à faire valider à la recette, CR-001/§6).
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Chacune des 4 données peut être saisie, modifiée et effacée (`CASE-AUTH-26`).
-- [ ] AC-2 — Une valeur hors plage est refusée avec un message, bornes incluses acceptées (`CASE-AUTH-27`).
-- [ ] AC-3 — Une donnée absente est remplacée par la valeur par défaut et l'utilisateur est averti (`CASE-AUTH-28`).
-- [ ] AC-4 — Le profil indique, pour chaque donnée, si la valeur est saisie ou par défaut (`CASE-AUTH-29`).
+- [ ] AC-1 — Chacune des 4 données peut être saisie, modifiée et effacée (`CASE-AUTH-32`).
+- [ ] AC-2 — Une valeur hors plage est refusée avec un message, bornes incluses acceptées (`CASE-AUTH-33`).
+- [ ] AC-3 — Une donnée absente est remplacée par la valeur par défaut et l'utilisateur est averti (`CASE-AUTH-34`).
+- [ ] AC-4 — Le profil indique, pour chaque donnée, si la valeur est saisie ou par défaut (`CASE-AUTH-35`).
 
 ### Revue IA
 
@@ -490,7 +509,7 @@ Scénario : Modification du classement
 | # | Situation | Comportement attendu |
 |---|---|---|
 | 1 | Même rang donné aux deux sports | Refusé : chaque rang est unique |
-| 2 | Aucun classement fourni | Classement par défaut paramétrable, signalé (`SPEC-AUTH-01`) |
+| 2 | Aucun classement fourni à l'inscription | Inscription refusée : le classement est obligatoire (REQ-017, `SPEC-AUTH-01` cas limite 4) |
 | 3 | Retrait du consentement aux données de forme | Le classement est conservé : il ne relève pas des données de forme |
 
 ### Ce qui n'est pas défini
@@ -499,8 +518,8 @@ Scénario : Modification du classement
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Le classement saisi à l'inscription est enregistré et modifiable dans le profil (`CASE-AUTH-30`).
-- [ ] AC-2 — Deux sports ne peuvent pas avoir le même rang (`CASE-AUTH-31`).
+- [ ] AC-1 — Le classement saisi à l'inscription est enregistré et modifiable dans le profil (`CASE-AUTH-36`).
+- [ ] AC-2 — Deux sports ne peuvent pas avoir le même rang (`CASE-AUTH-37`).
 
 ### Revue IA
 
@@ -512,14 +531,15 @@ Scénario : Modification du classement
 
 ## SPEC-AUTH-08 — Cloisonnement des données
 
-**Exigence :** REQ-105
+**Exigence :** REQ-105 (avec REQ-023, REQ-106)
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
 ### Règle
 
 > Un utilisateur ne peut consulter, modifier, exporter ou supprimer que ses propres
-> données. L'administrateur n'a pas accès aux données de profil des utilisateurs.
+> données. L'espace d'administration étant limité aux statuts des sentiers et aux
+> alertes (REQ-023), l'administrateur n'a pas accès aux données de profil des utilisateurs.
 
 ### Portée
 
@@ -551,8 +571,8 @@ Scénario : Accès croisé refusé
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Pour chacune des opérations consulter, modifier, exporter, supprimer, un accès croisé entre deux comptes est refusé (`CASE-AUTH-32`).
-- [ ] AC-2 — Un administrateur n'accède pas aux données de profil des utilisateurs (`CASE-AUTH-33`).
+- [ ] AC-1 — Pour chacune des opérations consulter, modifier, exporter, supprimer, un accès croisé entre deux comptes est refusé (`CASE-AUTH-38`).
+- [ ] AC-2 — Un administrateur n'accède pas aux données de profil des utilisateurs (`CASE-AUTH-39`).
 
 ### Revue IA
 
@@ -605,14 +625,14 @@ Scénario : Export après retrait du consentement
 
 ### Ce qui n'est pas défini
 
-- *24/11/2026* — Format exact de l'export (« standard », ZO-26) : à choisir par l'équipe parmi les formats ouverts courants.
+- *24/11/2026* — Format exact de l'export (« lisible et standard », REQ-019 ; réponse validée « export standard », CDC §11, ligne ZO-26) : à choisir par l'équipe parmi les formats ouverts courants. Aucune question ouverte côté client sur ce point : ZO-26 ne porte que sur la durée de conservation.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — L'export contient toutes les données personnelles du compte et aucune d'un autre compte (`CASE-AUTH-34`).
-- [ ] AC-2 — L'export ne contient jamais le mot de passe (`CASE-AUTH-35`).
-- [ ] AC-3 — Les données non renseignées apparaissent comme telles, sans valeur par défaut (`CASE-AUTH-36`).
-- [ ] AC-4 — Après un retrait, l'export contient les dates d'octroi et de retrait du consentement et aucune donnée de forme (`CASE-AUTH-40`).
+- [ ] AC-1 — L'export contient toutes les données personnelles du compte et aucune d'un autre compte (`CASE-AUTH-40`).
+- [ ] AC-2 — L'export ne contient jamais le mot de passe (`CASE-AUTH-41`).
+- [ ] AC-3 — Les données non renseignées apparaissent comme telles, sans valeur par défaut (`CASE-AUTH-42`).
+- [ ] AC-4 — Après un retrait, l'export contient les dates d'octroi et de retrait du consentement et aucune donnée de forme (`CASE-AUTH-43`).
 
 ### Revue IA
 
@@ -668,13 +688,16 @@ Scénario : Suppression annulée
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Effacement immédiat ou différé, et conservation éventuelle de traces (ZO-26) : hypothèse retenue = effacement immédiat et définitif, en attendant la durée de conservation fixée par le client.
+- *24/11/2026* — Mode de confirmation de la suppression (ressaisie du mot de passe) : choix de sécurité de l'équipe, non précisé par REQ-019.
+- *24/11/2026* — Purge des données personnelles éventuellement conservées dans le navigateur après la suppression : non traitée par le CDC. Point à arbitrer par l'équipe avec l'architecture (`SPEC-ARCH-nn`).
 - *24/11/2026* — Proposition d'export avant suppression : non demandée ; recommandée (lien vers `SPEC-AUTH-09` dans l'écran de confirmation).
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Après suppression confirmée, aucune donnée personnelle du compte ne subsiste (`CASE-AUTH-37`).
-- [ ] AC-2 — Les anciens identifiants ne permettent plus de se connecter (`CASE-AUTH-38`).
-- [ ] AC-3 — Sans confirmation valide, rien n'est supprimé (`CASE-AUTH-39`).
+- [ ] AC-1 — Après suppression confirmée, aucune donnée personnelle du compte ne subsiste (`CASE-AUTH-44`).
+- [ ] AC-2 — Les anciens identifiants ne permettent plus de se connecter (`CASE-AUTH-45`).
+- [ ] AC-3 — Sans confirmation valide, rien n'est supprimé (`CASE-AUTH-46`).
+- [ ] AC-4 — Les sessions ouvertes sur les autres appareils sont fermées : leur prochaine action renvoie vers la connexion (`CASE-AUTH-47`).
 
 ### Revue IA
 
