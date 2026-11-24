@@ -1,0 +1,165 @@
+{
+  "id": "validation-specs-cycle",
+  "name": "Cycle de Validation des Spécifications (Récursif)",
+  "description": "Sous-scénario de cycle : nettoie les rapports du tour, vide la mémoire (ClearContext) du Chercheur et du Vérificateur, exécute l'analyse contradictoire et l'application par le Chef, puis reboucle par CallScenario (auto-appel) tant que des corrections ou specs restent à traiter.",
+  "nodes": [
+    {
+      "id": "n-start",
+      "type": "start",
+      "position": {
+        "x": 60,
+        "y": 200
+      }
+    },
+    {
+      "id": "n-clean",
+      "type": "command",
+      "commandLine": "node scripts/validation/clean-turn-reports.mjs",
+      "position": {
+        "x": 247.3337371820084,
+        "y": -8.329851074169056
+      }
+    },
+    {
+      "id": "n-clear-chercheur",
+      "type": "clearContext",
+      "agentId": "agent-chercheur",
+      "position": {
+        "x": 352.793707269589,
+        "y": 293.3128048686308
+      }
+    },
+    {
+      "id": "n-clear-verif",
+      "type": "clearContext",
+      "agentId": "agent-verificateur",
+      "position": {
+        "x": 551.9265827608018,
+        "y": -11.173242311583351
+      }
+    },
+    {
+      "id": "n-chercheur",
+      "type": "run",
+      "agentId": "agent-chercheur",
+      "promptId": "prompt-chercheur-analyse",
+      "position": {
+        "x": 675.8545660006012,
+        "y": 284.9416365874275
+      }
+    },
+    {
+      "id": "n-verif",
+      "type": "run",
+      "agentId": "agent-verificateur",
+      "promptId": "prompt-verificateur-contradiction",
+      "position": {
+        "x": 863.9926835984571,
+        "y": -19.27316603395434
+      }
+    },
+    {
+      "id": "n-chef-apply",
+      "type": "run",
+      "agentId": "agent-chef",
+      "promptId": "prompt-chef-application",
+      "exitId": "exit-chef-decision",
+      "position": {
+        "x": 1001.1227942448693,
+        "y": 264.42058272266775
+      }
+    },
+    {
+      "id": "n-if",
+      "type": "if",
+      "ifScriptId": "if-reboucler-verification",
+      "position": {
+        "x": 1185.8310798120297,
+        "y": -12.690013209745956
+      }
+    },
+    {
+      "id": "n-recurse",
+      "type": "callScenario",
+      "targetScenarioId": "validation-specs-cycle",
+      "position": {
+        "x": 1604.157487521865,
+        "y": -27.558060328551427
+      }
+    },
+    {
+      "id": "n-cycle-done",
+      "type": "command",
+      "commandLine": "node -e \"console.log('[CYCLE] Toutes les spécifications ont été validées et stabilisées.')\"",
+      "position": {
+        "x": 1403.9786515597511,
+        "y": 282.9211472213843
+      }
+    }
+  ],
+  "connections": [
+    {
+      "sourceNodeId": "n-start",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-clean",
+      "targetPortIndex": 0,
+      "key": "c0"
+    },
+    {
+      "sourceNodeId": "n-clean",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-clear-chercheur",
+      "targetPortIndex": 0,
+      "key": "c1"
+    },
+    {
+      "sourceNodeId": "n-clear-chercheur",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-clear-verif",
+      "targetPortIndex": 0,
+      "key": "c2"
+    },
+    {
+      "sourceNodeId": "n-clear-verif",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-chercheur",
+      "targetPortIndex": 0,
+      "key": "c3"
+    },
+    {
+      "sourceNodeId": "n-chercheur",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-verif",
+      "targetPortIndex": 0,
+      "key": "c4"
+    },
+    {
+      "sourceNodeId": "n-verif",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-chef-apply",
+      "targetPortIndex": 0,
+      "key": "c5"
+    },
+    {
+      "sourceNodeId": "n-chef-apply",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-if",
+      "targetPortIndex": 0,
+      "key": "c6"
+    },
+    {
+      "sourceNodeId": "n-if",
+      "sourcePortIndex": 0,
+      "targetNodeId": "n-recurse",
+      "targetPortIndex": 0,
+      "key": "c7"
+    },
+    {
+      "sourceNodeId": "n-if",
+      "sourcePortIndex": 1,
+      "targetNodeId": "n-cycle-done",
+      "targetPortIndex": 0,
+      "key": "c8"
+    }
+  ]
+}

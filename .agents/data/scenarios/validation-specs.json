@@ -1,14 +1,14 @@
 {
   "id": "validation-specs",
-  "name": "Validation des Spécifications — 3 Agents",
-  "description": "Workflow multi-specs : Chef planifie une fois, puis boucle avec liaison arrière (Nettoyage -> ClearContext Chercheur/Vérificateur -> Chercheur -> Vérificateur -> Chef application/arbitrage -> If vers nettoyage ou fin).",
+  "name": "Validation des Spécifications — Scénario Maître",
+  "description": "Scénario maître : exécute la planification globale unique par le Chef, puis déclenche le cycle récursif de validation.",
   "nodes": [
     {
       "id": "n-start",
       "type": "start",
       "position": {
-        "x": -27.4135977070044,
-        "y": 466.48380002405884
+        "x": 60,
+        "y": 200
       }
     },
     {
@@ -17,84 +17,26 @@
       "agentId": "agent-chef",
       "promptId": "prompt-chef-planification",
       "position": {
-        "x": 420.1584060866517,
-        "y": 535.6134045932481
+        "x": 306.25,
+        "y": 315.68359375
       }
     },
     {
-      "id": "n-clean",
-      "type": "command",
-      "commandLine": "node scripts/validation/clean-turn-reports.mjs",
+      "id": "n-call-cycle",
+      "type": "callScenario",
+      "targetScenarioId": "validation-specs-cycle",
       "position": {
-        "x": 1099.793525383588,
-        "y": 569.665415764729
-      }
-    },
-    {
-      "id": "n-clear-chercheur",
-      "type": "clearContext",
-      "agentId": "agent-chercheur",
-      "position": {
-        "x": 509.93213055761066,
-        "y": 272.66886872244555
-      }
-    },
-    {
-      "id": "n-clear-verif",
-      "type": "clearContext",
-      "agentId": "agent-verificateur",
-      "position": {
-        "x": 739.3165430851841,
-        "y": 95.96708398004291
-      }
-    },
-    {
-      "id": "n-chercheur",
-      "type": "run",
-      "agentId": "agent-chercheur",
-      "promptId": "prompt-chercheur-analyse",
-      "position": {
-        "x": 922.4626144590421,
-        "y": 256.8829462207059
-      }
-    },
-    {
-      "id": "n-verif",
-      "type": "run",
-      "agentId": "agent-verificateur",
-      "promptId": "prompt-verificateur-contradiction",
-      "position": {
-        "x": 1088.716743283268,
-        "y": 94.70689144062592
-      }
-    },
-    {
-      "id": "n-chef-apply",
-      "type": "run",
-      "agentId": "agent-chef",
-      "promptId": "prompt-chef-application",
-      "exitId": "exit-chef-decision",
-      "position": {
-        "x": 1317.1359019508623,
-        "y": 243.4029079400272
-      }
-    },
-    {
-      "id": "n-if",
-      "type": "if",
-      "ifScriptId": "if-reboucler-verification",
-      "position": {
-        "x": 1612.358671511169,
-        "y": 176.4116087967636
+        "x": 506.953125,
+        "y": 160.296875
       }
     },
     {
       "id": "n-done",
       "type": "command",
-      "commandLine": "node -e \"console.log('[SUCCÈS] Toutes les spécifications ont été validées et mises en conformité avec le CDC.')\"",
+      "commandLine": "node -e \"console.log('[SUCCÈS] Validation de toutes les spécifications terminée avec succès.')\"",
       "position": {
-        "x": 1890.151041390068,
-        "y": 356.52097602321373
+        "x": 677.02734375,
+        "y": 322.61328125
       }
     }
   ],
@@ -109,65 +51,16 @@
     {
       "sourceNodeId": "n-plan",
       "sourcePortIndex": 0,
-      "targetNodeId": "n-clean",
+      "targetNodeId": "n-call-cycle",
       "targetPortIndex": 0,
       "key": "c1"
     },
     {
-      "sourceNodeId": "n-clean",
+      "sourceNodeId": "n-call-cycle",
       "sourcePortIndex": 0,
-      "targetNodeId": "n-clear-chercheur",
-      "targetPortIndex": 0,
-      "key": "c2"
-    },
-    {
-      "sourceNodeId": "n-clear-chercheur",
-      "sourcePortIndex": 0,
-      "targetNodeId": "n-clear-verif",
-      "targetPortIndex": 0,
-      "key": "c3"
-    },
-    {
-      "sourceNodeId": "n-clear-verif",
-      "sourcePortIndex": 0,
-      "targetNodeId": "n-chercheur",
-      "targetPortIndex": 0,
-      "key": "c4"
-    },
-    {
-      "sourceNodeId": "n-chercheur",
-      "sourcePortIndex": 0,
-      "targetNodeId": "n-verif",
-      "targetPortIndex": 0,
-      "key": "c5"
-    },
-    {
-      "sourceNodeId": "n-verif",
-      "sourcePortIndex": 0,
-      "targetNodeId": "n-chef-apply",
-      "targetPortIndex": 0,
-      "key": "c6"
-    },
-    {
-      "sourceNodeId": "n-chef-apply",
-      "sourcePortIndex": 0,
-      "targetNodeId": "n-if",
-      "targetPortIndex": 0,
-      "key": "c7"
-    },
-    {
-      "sourceNodeId": "n-if",
-      "sourcePortIndex": 0,
-      "targetNodeId": "n-clean",
-      "targetPortIndex": 0,
-      "key": "loop"
-    },
-    {
-      "sourceNodeId": "n-if",
-      "sourcePortIndex": 1,
       "targetNodeId": "n-done",
       "targetPortIndex": 0,
-      "key": "end"
+      "key": "c2"
     }
   ]
 }
