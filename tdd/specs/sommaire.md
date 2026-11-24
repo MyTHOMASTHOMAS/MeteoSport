@@ -23,7 +23,7 @@ Index des domaines. Un fichier `specs/<domaine>.md` par domaine.
 
 ### `AUTH` — Comptes, profil et RGPD
 - **Périmètre :** inscription (≥ 15 ans), connexion, déconnexion, réinitialisation du mot de passe, sécurité (hachage, blocage temporaire après échecs), cloisonnement des données, gestion du profil facultatif (âge, poids, taille, VMA + bornes plausibles) et du classement des sports favoris, recueil et retrait du consentement, CGU, politique de confidentialité, export standard et suppression du compte.
-- **Couverture CDC :** `REQ-015` à `REQ-020`, `REQ-105`, `REQ-114` ; `R-13`, `R-14`, `R-16`, `R-17`, `R-20`.
+- **Couverture CDC :** `REQ-015` à `REQ-020`, `REQ-105`, `REQ-114` ; `R-13`, `R-14`, `R-16`, `R-17` (`R-20` relève de `CALC`).
 - **Points ouverts à raccrocher :** durée de conservation (`ZO-26`), qualification RGPD des données de forme physique (`ZO-33`).
 
 ### `REF` — Référentiels internes

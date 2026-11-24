@@ -1,6 +1,6 @@
 {
   "id": "prompt-verificateur-contradiction",
   "name": "Contre-expertise et rapport contradictoire",
-  "content": "Tu disposes d'un contexte libre et neuf.\n1. Lis 'out/validation-specs/planification.md' pour identifier la SPEC_ACTIVE, puis lis 'out/validation-specs/rapport-chercheur.md', la spécification concernée et 'tdd/docs/cdc/cahier-des-charges-v1.md'.\n2. Examine contradictoirement chaque point soulevé par le chercheur : confirme sa validité, conteste si c'est un faux positif, ou ajuste la correction.\n3. Recherche d'éventuels oublis ou angles morts non vus par le chercheur.\n4. Rédige impérativement 'out/validation-specs/rapport-verificateur.md' avec tes objections, approbations et ajouts.\nRéponds 'RAPPORT_VERIFICATEUR_GENERE' une fois le fichier écrit."
+  "content": "Tu disposes d'un contexte libre et neuf.\n1. Lis la toute première ligne de 'out/validation-specs/planification.md' pour identifier la SPEC_ACTIVE, puis lis 'out/validation-specs/rapport-chercheur.md', la spécification concernée et 'tdd/docs/cdc/cahier-des-charges-v1.md'.\n2. Examine contradictoirement chaque point soulevé par le chercheur : confirme sa validité, conteste si c'est un faux positif, ou ajuste la correction.\n3. Recherche d'éventuels oublis ou angles morts non vus par le chercheur.\n4. Rédige impérativement 'out/validation-specs/rapport-verificateur.md' avec tes objections, approbations et ajouts.\nRéponds 'RAPPORT_VERIFICATEUR_GENERE' une fois le fichier écrit."
 }
 
