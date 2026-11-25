@@ -132,9 +132,11 @@ lu et validé au démarrage.
 
 - L'option A est écartée : elle contredit directement `REQ-108` et `REQ-115`.
 - Entre B et C, le critère décisif est **qui modifie** : l'administrateur client
-  doit pouvoir ajuster lui-même les valeurs (validation du client, voir
-  « Conséquences »). Un fichier sur le poste suppose l'intervention de l'équipe
-  technique et un redémarrage.
+  doit pouvoir ajuster lui-même les valeurs, sans intervention de l'équipe
+  technique ni redémarrage, ce qu'un fichier sur le poste ne permet pas. Ce
+  besoin a été confirmé oralement par le client à l'équipe ; il n'est consigné
+  dans aucun document de `tdd/` et ne s'appuie donc sur aucune exigence du CDC
+  (voir « Conséquences acceptées »).
 - L'historique en base répond au besoin de reproductibilité de `REQ-107` : on sait
   quelle valeur s'appliquait à une date donnée, ce qu'un fichier modifié en place
   ne garantit pas.
@@ -148,12 +150,12 @@ lu et validé au démarrage.
 
 ## Conséquences acceptées
 
-- **Traçabilité à compléter.** Le CDC (§ parties prenantes, `REQ-021`, `REQ-022`)
-  et le CR-001 (`Q42`) limitent l'administrateur à l'état des sentiers et aux
-  alertes. La validation par le client du réglage des paramètres par
-  l'administrateur n'est consignée dans aucun document de `tdd/` : elle doit
-  l'être (compte rendu ou fiche d'impact) et le CDC mis à jour, avant le passage
-  de cet ADR au statut « accepté ».
+- **Écart assumé avec le CDC.** Le CDC (§ parties prenantes, `REQ-021`,
+  `REQ-022`) et le CR-001 (`Q42`) limitent l'administrateur à l'état des sentiers
+  et aux alertes. Le réglage des paramètres par l'administrateur repose sur une
+  confirmation orale du client, que l'équipe a choisi de ne pas consigner : ni
+  compte rendu, ni fiche d'impact, ni mise à jour du CDC. Cet ADR est la seule
+  trace de ce choix ; aucune exigence du CDC ne le couvre.
 - **Nouvelle spec.** L'écran de paramètres n'est couvert par aucune des specs
   `SPEC-ADMIN-01` à `04` : une spec dédiée est à écrire, et la portée de
   `SPEC-ADMIN-01` est à étendre.
@@ -177,7 +179,7 @@ lu et validé au démarrage.
 
 ## Ce qui nous ferait revenir dessus
 
-- Le client ne confirme pas par écrit qu'il veut régler ces paramètres : on
+- Le client revient sur sa demande de régler lui-même ces paramètres : on
   revient à l'option B (fichier, équipe technique seule).
 - Le découpage météo doit changer souvent ou être ajusté par le client (par
   exemple pour suivre les quotas en cours d'exploitation) : on reconsidère
