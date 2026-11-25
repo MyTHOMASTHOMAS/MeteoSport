@@ -22,7 +22,7 @@ Index des domaines. Un fichier `specs/<domaine>.md` par domaine.
 - **Couverture CDC :** `REQ-101`, `REQ-102`, `REQ-108`, `REQ-109`, `REQ-111`, `REQ-115`.
 
 ### `AUTH` — Comptes, profil et RGPD
-- **Périmètre :** inscription (≥ 15 ans), connexion, déconnexion, réinitialisation du mot de passe, sécurité (hachage, blocage temporaire après échecs), cloisonnement des données, gestion du profil facultatif (âge, poids, taille, VMA + bornes plausibles) et du classement des sports favoris, recueil et retrait du consentement, CGU, politique de confidentialité, export standard et suppression du compte.
+- **Périmètre :** inscription (≥ 15 ans), connexion, déconnexion, réinitialisation et changement du mot de passe, sécurité (hachage, blocage temporaire après échecs), cloisonnement des données, gestion du profil facultatif (âge, poids, taille, VMA + bornes plausibles) et du classement des sports favoris, recueil et retrait du consentement, CGU, politique de confidentialité, export standard et suppression du compte.
 - **Couverture CDC :** `REQ-015` à `REQ-020`, `REQ-105`, `REQ-114` ; `R-13`, `R-14`, `R-16`, `R-17` (`R-20` relève de `CALC`).
 - **Points ouverts à raccrocher :** durée de conservation (`ZO-26`), qualification RGPD des données de forme physique (`ZO-33`).
 
@@ -33,6 +33,7 @@ Index des domaines. Un fichier `specs/<domaine>.md` par domaine.
 ### `METEO` — Sources externes, météo et fraîcheur
 - **Périmètre :** catalogue documenté des sources gratuites retenues (producteur, fréquence, quotas, conditions d'utilisation), découpage géographique météo paramétrable, prévisions sur 3 jours (heure par heure et par jour), constitution de l'historique interne des pluies récentes, horodatage de fraîcheur et gestion des indisponibilités ou données périmées sans extrapolation.
 - **Couverture CDC :** `REQ-007`, `REQ-031`, `REQ-102`, `REQ-103`, `REQ-104`, `REQ-108`, `REQ-113` ; `R-03`, `R-07`, `R-10`, `R-18`.
+- **Renvoi entrant :** `REQ-032` (partiel) — le rattachement de la météo aux éléments des référentiels est indirect, par la zone du découpage météo (hypothèse déclarée dans `SPEC-REF-06`, portée par `SPEC-METEO-02`).
 
 ### `TRAIL` — Trail : recherche, routage et trajet conseillé
 - **Périmètre :** saisie des critères du jour même (départ/arrivée, heure de départ, aller simple/aller-retour, dénivelé) et second mode par distance ou niveau ; construction d'itinéraire sur sentiers balisés ajustable par l'utilisateur, affichage de l'état des sentiers et de la cotation, gestion des impasses (contrainte bloquante + parcours proche réalisable) et calcul du trajet conseillé sur le panel pilote lorsqu'un sentier est désactivé.
