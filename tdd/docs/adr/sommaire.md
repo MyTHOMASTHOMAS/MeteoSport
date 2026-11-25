@@ -7,7 +7,7 @@ Gabarit : `ADR-000-template.md`.
 |---|---|---|---|
 | [ADR-001](./ADR-001-architecture-stack-locale.md) | Architecture applicative, stack technique et exécution locale | proposé | REQ-102, REQ-111 |
 | [ADR-002](./ADR-002-persistance-donnees-spatiales.md) | Persistance des données, géométries et historique interne des pluies | proposé | REQ-015, REQ-021, REQ-022, REQ-032, R-08, R-10, R-11 |
-| [ADR-003](./ADR-003-parametrage-externalise.md) | Externalisation et validation du paramétrage au déploiement | proposé | REQ-108, REQ-115, R-03, R-07, R-12, R-17, R-20 |
+| [ADR-003](./ADR-003-parametrage-externalise.md) | Externalisation et validation du paramétrage | proposé | REQ-108, REQ-115, R-03, R-07, R-12, R-17, R-20 |
 | [ADR-004](./ADR-004-securite-auth-rgpd.md) | Authentification, sessions multi-appareils, sécurité et RGPD | proposé | REQ-015 à REQ-020, REQ-105, REQ-106, REQ-114, R-13, R-14, R-16 |
 | [ADR-005](./ADR-005-sources-gratuites-quotas-cache.md) | Sources de données gratuites, quotas et stratégie de cache | proposé | REQ-007, REQ-024, REQ-031, REQ-102, REQ-103, REQ-104, REQ-113, R-07, R-10, R-18 |
 | [ADR-006](./ADR-006-frontend-pwa-cartographie.md) | Interface mobile-first, PWA connectée, cartographie et purge locale | proposé | REQ-101, REQ-109, REQ-015, REQ-019 |
@@ -28,7 +28,7 @@ Gabarit : `ADR-000-template.md`.
 - **Domaines concernés :** `REF`, `METEO`, `AUTH`, `ADMIN`
 - **Décisions à trancher :** Choix du SGBD local capable de gérer les entités relationnelles (comptes, profils, consentements, forçages, alertes), les géométries 3D avec altitudes (sentiers, jonctions, points d'eau, spots, emprises des zones météo) et les séries temporelles (historique interne des pluies par zone et par heure, avec purge automatique au-delà de la durée de conservation paramétrée).
 
-### `ADR-003` — Externalisation et validation du paramétrage au déploiement
+### `ADR-003` — Externalisation et validation du paramétrage
 - **Domaines concernés :** `ARCH`, `METEO`, `CALC`, `GPX`, `AUTH`
 - **Décisions à trancher :** Format et chargement des paramètres externalisés sans modification du code (`REQ-108`, `REQ-115` et paramètres ajoutés par les specs : paliers VMA, valeurs par défaut, seuils, âges maximaux, découpage météo, tolérances GPX, blocage connexion). Règles de validation au démarrage : refus bloquant si deux zones météo se chevauchent (`SPEC-METEO-02` AC-3) et signalement non bloquant si une zone référencée par un spot ou un critère pilote disparaît (`SPEC-METEO-02` AC-5).
 
