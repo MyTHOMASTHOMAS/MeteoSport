@@ -9,9 +9,9 @@ R-16 s'applique à `SPEC-TRAIL-01` à `SPEC-TRAIL-07` ; il n'est pas répété d
 Domaines voisins auxquels ce domaine renvoie :
 
 - `CALC` : temps de parcours et heures estimées de passage (REQ-005), verdict (REQ-029), explications (REQ-009).
-- `METEO` : prévisions par zone, fraîcheur et indisponibilité des sources (REQ-007, REQ-103, REQ-104). La clause de REQ-002 « en aller-retour, la météo de chaque passage est affichée séparément » est couverte par `SPEC-METEO-04` (AC-2) ; `TRAIL` fournit les deux passages distincts (`SPEC-TRAIL-01`, AC-5).
+- `METEO` : prévisions par zone, fraîcheur et indisponibilité des sources (REQ-007, REQ-103, REQ-104). La clause de REQ-002 « en aller-retour, la météo de chaque passage est affichée séparément » relève du domaine `METEO`. **Elle n'est couverte par aucune spec dans le dépôt** : `sources-meteo.md` a été supprimé (commit `7e4094f`, ARB-001) ; elle reste non couverte jusqu'à la réécriture du domaine `METEO` (ARB-002). `TRAIL` fournit les deux passages distincts (`SPEC-TRAIL-01`, AC-5).
 - `REF` : référentiel des sentiers, cotations, critères de sécurité du panel pilote (REQ-023, REQ-032).
-- `ADMIN` : forçage de l'état d'un sentier, création et retrait des alertes (REQ-021, REQ-022, REQ-026). L'affichage des alertes en cours sur le trajet choisi et le trajet conseillé est couvert par `SPEC-TRAIL-05` (REQ-026 partiel, R-11).
+- `ADMIN` : forçage de l'état d'un sentier, création et retrait des alertes (REQ-021, REQ-022, REQ-026). L'affichage des alertes en cours sur le trajet choisi et le trajet conseillé est couvert par `SPEC-TRAIL-05` (REQ-026 partiel, R-11). L'affichage sur la page de chaque sentier (REQ-026) n'est pas couvert par `TRAIL` et relève d'une spec `ADMIN` ou `REF` encore non rédigée (ARB-002).
 - `ARCH` : paramétrage de l'âge maximal des données (REQ-115).
 - `GPX` : validation et export du tracé retenu (REQ-011).
 
@@ -21,7 +21,7 @@ Domaines voisins auxquels ce domaine renvoie :
 
 **Exigence :** REQ-001, REQ-002 (avec règles R-16, R-18 ; contrainte 4)
 **Statut :** revue IA faite
-**Version :** v3 (24/11/2026)
+**Version :** v4 (24/11/2026)
 
 ### Règle
 
@@ -39,7 +39,7 @@ Domaines voisins auxquels ce domaine renvoie :
 - Ne couvre pas la construction de l'itinéraire → `SPEC-TRAIL-02`.
 - Ne couvre pas le second mode de recherche par distance ou niveau → `SPEC-TRAIL-04`.
 - Ne couvre pas le calcul des heures estimées de passage, aller et retour → `SPEC-CALC-01`.
-- Ne couvre pas l'affichage de la météo de chaque passage → domaine `METEO`, `SPEC-METEO-04` (REQ-007 ; clause aller-retour de REQ-002).
+- Ne couvre pas l'affichage de la météo de chaque passage → domaine `METEO` (REQ-007 ; clause aller-retour de REQ-002 : spec à réécrire, non couverte à ce jour, ARB-001).
 - Ne couvre pas les sorties sur plusieurs jours, les étapes et les gîtes → hors périmètre.
 - Ne couvre pas une recherche pour un autre jour que le jour même → hors périmètre.
 
@@ -93,16 +93,17 @@ Scénario : Recherche en aller-retour
 - *24/11/2026* — Forme de saisie du départ et de l'arrivée (lieu nommé, point sur une carte, point d'accès du référentiel) et règle de rattachement d'un lieu comme « La Possession » à un point d'entrée sur un sentier du référentiel.
 - *24/11/2026* — Heure de départ déjà passée : refus ou acceptation. Hypothèse retenue : une heure saisie par l'utilisateur et antérieure à l'heure courante est refusée, la recherche sert à préparer une sortie à venir. L'heure pré-remplie non modifiée est remise à l'heure courante au lancement, pour ne pas refuser la valeur proposée par l'application quand quelques minutes se sont écoulées.
 - *24/11/2026* — Aller-retour : retour par le même tracé inversé, ou boucle possible. Hypothèse retenue : même tracé inversé.
-- *24/11/2026* — Dénivelé accepté : dénivelé positif cumulé maximal, sur l'aller seul ou sur toute la sortie en aller-retour. Hypothèse retenue : dénivelé positif cumulé sur toute la sortie. Caractère obligatoire du champ non précisé.
+- *24/11/2026* — Dénivelé accepté : dénivelé positif cumulé maximal, sur l'aller seul ou sur toute la sortie en aller-retour. Hypothèse retenue : dénivelé positif cumulé sur toute la sortie. Caractère obligatoire du champ : hypothèse retenue, obligatoire dans le mode départ → arrivée (REQ-002 : « l'utilisateur choisit … le dénivelé accepté ») ; facultatif dans le mode `SPEC-TRAIL-04` (REQ-010 ne le cite pas).
 - *24/11/2026* — REQ-008 cite des « filtres choisis par l'utilisateur (difficulté…) » qui n'apparaissent pas dans REQ-001 et REQ-002. Hypothèse retenue : les filtres sont le type de sortie, le dénivelé accepté et une difficulté maximale facultative, exprimée dans l'échelle de cotation officielle (`SPEC-TRAIL-06`). Ces filtres s'appliquent au trajet choisi construit (`SPEC-TRAIL-02`) et au trajet conseillé (`SPEC-TRAIL-07`).
 - *24/11/2026* — Sortie dont l'heure de fin estimée dépasse la journée : à signaler, refuser ou accepter. Hypothèse retenue, alignée sur `SPEC-CALC-01` (cas limite 6) : une arrivée estimée après minuit est signalée comme hors du cadre d'une sortie à la journée (REQ-002, R-18) ; une arrivée estimée après le coucher du soleil est signalée pour la sécurité — proposition de l'équipe, hors CDC, à valider à la recette : ni le CDC ni REQ-032 ne prévoient la donnée « heure du coucher du soleil » (ARB-002). Dans les deux cas, la recherche n'est pas refusée : l'utilisateur garde la main sur son trajet choisi.
+- *24/11/2026* — Météo de chaque passage en aller-retour (clause de REQ-002). Elle relève du domaine `METEO`, dont la spec (`sources-meteo.md`) a été supprimée du dépôt (commit `7e4094f`). La clause n'est donc couverte par aucune spec à ce jour (ARB-001, ARB-002). `TRAIL` fournit seulement les deux passages distincts (AC-5) ; aucun AC météo n'est ajouté dans `TRAIL` (doublon du domaine `METEO`).
 
 ### Critères d'acceptation
 
 - [ ] AC-1 — À l'ouverture, l'heure de départ vaut l'heure courante et la date est celle du jour, non modifiable ; une heure pré-remplie non modifiée est remise à l'heure courante au lancement (`CASE-TRAIL-01`).
 - [ ] AC-2 — L'utilisateur peut choisir aller simple ou aller-retour, saisir un dénivelé accepté et, s'il le souhaite, une difficulté maximale ; ces critères sont transmis à la recherche (`CASE-TRAIL-02`).
 - [ ] AC-3 — Une date autre que celle du jour n'est jamais prise en compte (`CASE-TRAIL-03`).
-- [ ] AC-4 — Une saisie incomplète ou invalide (départ, arrivée, dénivelé, heure modifiée déjà passée — ce dernier refus non prévu par REQ-001, à valider à la recette) bloque la recherche avec un message (`CASE-TRAIL-04`).
+- [ ] AC-4 — Une saisie incomplète ou invalide (départ, arrivée, dénivelé absent ou invalide, heure modifiée déjà passée — ce dernier refus non prévu par REQ-001, à valider à la recette) bloque la recherche avec un message (`CASE-TRAIL-04`).
 - [ ] AC-5 — En aller-retour, chaque sentier emprunté figure dans l'itinéraire avec deux passages distincts, aller et retour (`CASE-TRAIL-05`).
 
 ### Revue IA
@@ -117,6 +118,8 @@ Scénario : Recherche en aller-retour
 | La contrainte 4 est utilisée (cas limite 6) sans être citée. | Acceptée | Ajoutée dans l'en-tête. |
 | Validation itération 1 (A-01) : la clause aller-retour de REQ-002 serait orpheline. | Partiellement acceptée | Elle est portée par `SPEC-METEO-04` (version versionnée de `sources-meteo.md`, absente localement : ARB-001). Renvoi précisé ; pas d'AC météo dans `TRAIL` (doublon). |
 | Validation itération 1 (A-12, A-13) : refus d'une heure passée et coucher du soleil absents du CDC. | Acceptée | Marqués « à valider à la recette » ; donnée « coucher du soleil » inscrite dans ARB-002. |
+| Validation itération 2 (C-01, V-01, critique) : `SPEC-METEO-04` n'existe plus dans le dépôt (`7e4094f`). | Acceptée | Renvois de l'en-tête et de la portée corrigés : clause aller-retour de REQ-002 non couverte à ce jour (ARB-001, ARB-002) ; entrée datée ajoutée ; pas d'AC météo ajouté dans `TRAIL` (rejet de A-01 maintenu). |
+| Validation itération 2 (V-02) : le caractère obligatoire du dénivelé accepté était laissé ouvert alors qu'AC-4 le rendait obligatoire. | Acceptée | Hypothèse explicitée (obligatoire en départ → arrivée, facultatif en mode `SPEC-TRAIL-04`) ; AC-4 précisé. |
 
 ---
 
@@ -210,7 +213,7 @@ Scénario : Ajustement du trajet par l'utilisateur
 
 **Exigence :** REQ-003, REQ-010 (cas sans trace dans la plage de distance) (avec règle R-01 ; décision CR-001/§5.2 n° 11, ex-ZO-21, close et intégrée à REQ-003)
 **Statut :** revue IA faite
-**Version :** v3 (24/11/2026)
+**Version :** v4 (24/11/2026)
 
 ### Règle
 
@@ -220,7 +223,7 @@ Scénario : Ajustement du trajet par l'utilisateur
 
 ### Portée
 
-- Couvre l'identification de la contrainte bloquante : départ et arrivée non reliés par le référentiel, dénivelé accepté insuffisant, difficulté maximale trop basse, point hors référentiel, et, dans le mode de `SPEC-TRAIL-04`, aucune trace dans la plage de distance.
+- Couvre l'identification de la contrainte bloquante : départ et arrivée non reliés par le référentiel, dénivelé accepté insuffisant, difficulté maximale trop basse, point hors référentiel, et, dans le mode de `SPEC-TRAIL-04`, aucune trace dans la plage de distance ou dans la plage de durée du niveau.
 - Couvre la proposition d'un parcours proche réalisable, qui respecte la règle R-01.
 - Couvre le cas où aucun parcours proche n'existe.
 - Ne couvre pas la construction nominale → `SPEC-TRAIL-02`.
@@ -255,7 +258,7 @@ Scénario : Aucune trace dans la plage de distance
 | # | Situation | Comportement attendu |
 |---|---|---|
 | 1 | Plusieurs contraintes bloquantes simultanées | Toutes les contraintes bloquantes sont indiquées. |
-| 2 | Aucun parcours proche réalisable | La contrainte bloquante est indiquée ; un message dit qu'aucun parcours proche n'a été trouvé ; aucun tracé n'est affiché (cas non prévu par REQ-003 ; application de R-01 et de R-07 : aucun tracé hors référentiel ni inventé). |
+| 2 | Aucun parcours proche réalisable | La contrainte bloquante est indiquée ; un message dit qu'aucun parcours proche n'a été trouvé ; aucun tracé n'est affiché (cas non prévu par REQ-003 ; application de R-01 : aucun tracé hors référentiel). |
 | 3 | Point de départ trop éloigné de tout sentier du référentiel | La contrainte « départ hors référentiel » est indiquée. |
 | 4 | Parcours proche dont un sentier est désactivé | Le parcours proche est affiché comme un trajet choisi, avec l'alerte du sentier (`SPEC-TRAIL-02`, AC-3). Si ce sentier fait partie du panel pilote, il déclenche un trajet conseillé comme pour tout trajet choisi (`SPEC-TRAIL-07`). |
 
@@ -270,6 +273,9 @@ Scénario : Aucune trace dans la plage de distance
 - [ ] AC-1 — Avec un dénivelé accepté insuffisant, l'application nomme cette contrainte, indique le dénivelé minimal nécessaire et propose un parcours proche (`CASE-TRAIL-11`).
 - [ ] AC-2 — Avec un départ et une arrivée non reliés, l'application le dit et propose un parcours proche sur sentiers du référentiel (`CASE-TRAIL-12`).
 - [ ] AC-3 — Sans parcours proche, seul le message est affiché, sans tracé inventé (`CASE-TRAIL-13`).
+- [ ] AC-4 — Quand plusieurs contraintes bloquent, toutes sont indiquées (`CASE-TRAIL-38`).
+- [ ] AC-5 — Un départ trop éloigné de tout sentier du référentiel est signalé comme « départ hors référentiel » (`CASE-TRAIL-39`).
+- [ ] AC-6 — Quand la difficulté maximale saisie est trop basse pour tout itinéraire, l'application nomme cette contrainte et propose un parcours proche (`CASE-TRAIL-40`).
 
 ### Revue IA
 
@@ -278,14 +284,16 @@ Scénario : Aucune trace dans la plage de distance
 | `SPEC-TRAIL-04` (cas limite 1) renvoie ici pour la contrainte « distance », que la portée ne couvrait pas ; l'hypothèse de parcours proche (relâcher l'arrivée) ne s'applique pas à ce mode. | Acceptée | Contrainte « distance » ajoutée à la portée, scénario et hypothèse propres au mode par distance ajoutés, REQ-010 cité dans l'en-tête. Le critère reste vérifié par `SPEC-TRAIL-04`, AC-4. |
 | La difficulté maximale (`SPEC-TRAIL-01`) peut aussi être une contrainte bloquante. | Acceptée | Ajoutée à la portée. |
 | Le cas limite 4 ne dit pas si un sentier désactivé du parcours proche déclenche un trajet conseillé. | Acceptée | Cas limite 4 complété. |
+| Validation itération 2 (C-11) : R-07 (sources de données) cité à tort pour le refus d'un tracé inventé. | Acceptée (ajustée) | Fondement réduit à R-01 ; REQ-003 non cité, ce cas n'y étant pas prévu. |
+| Validation itération 2 (C-12, V-04) : cas limites 1 et 3 et contrainte « difficulté maximale » sans AC ; contrainte « niveau » absente. | Acceptée | AC-4 (`CASE-TRAIL-38`), AC-5 (`CASE-TRAIL-39`), AC-6 (`CASE-TRAIL-40`) ajoutés ; plage de durée du niveau ajoutée à la portée. |
 
 ---
 
 ## SPEC-TRAIL-04 — Suggestion de trace par distance ou par niveau
 
-**Exigence :** REQ-010 (avec REQ-001 pour l'heure de départ, REQ-002 pour le type de sortie ; règles R-01, R-02, R-03, R-17, R-18, R-20)
+**Exigence :** REQ-010 (avec REQ-001 pour l'heure de départ, REQ-002 pour le type de sortie, REQ-005 pour la durée estimée via `SPEC-CALC-01` ; règles R-01, R-02, R-03, R-17, R-18, R-20)
 **Statut :** revue IA faite
-**Version :** v3 (24/11/2026)
+**Version :** v4 (24/11/2026)
 
 ### Règle
 
@@ -298,7 +306,8 @@ Scénario : Aucune trace dans la plage de distance
 
 - Couvre la saisie d'un point de départ, d'une heure de départ, du type de sortie (aller simple ou aller-retour) et d'une distance ou d'un niveau souhaité, pour le jour même.
 - Couvre la suggestion d'une trace sur sentiers du référentiel (R-01).
-- Couvre l'usage du niveau déduit de la VMA par paliers, ou d'un niveau par défaut signalé quand la VMA est absente (R-17, R-20).
+- Couvre la saisie facultative du dénivelé accepté et de la difficulté maximale.
+- Couvre l'usage du niveau déduit de la VMA par paliers, ou d'un niveau par défaut signalé quand la VMA est absente (niveau par défaut : `SPEC-CALC-02`, déduit de la VMA par défaut, R-17, R-20).
 - Ne couvre pas la construction départ → arrivée → `SPEC-TRAIL-02`.
 - Ne couvre pas l'état des sentiers et le trajet conseillé, identiques aux deux modes → `SPEC-TRAIL-05`, `SPEC-TRAIL-07`.
 - Ne couvre pas la contrainte bloquante et la trace proche quand aucune trace ne convient → `SPEC-TRAIL-03`.
@@ -319,8 +328,9 @@ Scénario : Suggestion par distance
 Scénario : Suggestion par niveau, VMA renseignée
   Étant donné un utilisateur dont la VMA le place au palier « confirmé »
   Quand il demande une suggestion par niveau depuis « La Possession »
-  Alors l'application suggère une trace dont la durée estimée est compatible avec la durée cible du palier « confirmé »
-  Et la cotation officielle de la trace n'intervient pas dans ce choix
+  Et qu'il n'a saisi aucune difficulté maximale
+  Alors l'application suggère une trace dont la durée estimée, sur toute la sortie, est comprise dans la plage de durée cible du palier « confirmé »
+  Et le palier de VMA n'agit pas sur la cotation de la trace (R-20)
 
 Scénario : Suggestion par niveau, VMA absente
   Étant donné un utilisateur sans VMA dans son profil
@@ -339,12 +349,13 @@ Scénario : Suggestion par niveau, VMA absente
 | 4 | Distance et niveau saisis ensemble | À fixer (voir « Ce qui n'est pas défini »). |
 | 5 | Plusieurs traces conviennent | Une seule trace est suggérée. Par distance : celle dont la longueur est la plus proche du milieu de la plage. Par niveau : critère à fixer avec la correspondance niveau → traces (voir « Ce qui n'est pas défini »). |
 | 6 | Heure de départ absente, invalide ou modifiée et déjà passée | Mêmes règles que `SPEC-TRAIL-01` (cas limite 3 et AC-1). |
+| 7 | Aucune trace dont la durée estimée est dans la plage du palier | Comportement de `SPEC-TRAIL-03` : la contrainte « niveau » est indiquée et la trace dont la durée estimée est la plus proche de la plage est proposée. |
 
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Forme de la distance : une valeur avec tolérance, ou une plage saisie par l'utilisateur. Hypothèse retenue : une plage minimum–maximum, sans tolérance paramétrable. Le « environ » de REQ-010 est couvert par la proposition de la trace la plus proche (`SPEC-TRAIL-03`) quand aucune trace n'est dans la plage.
 - *24/11/2026* — Trace suggérée : aller simple vers une arrivée choisie par l'application, boucle, ou aller-retour. Hypothèse retenue : l'utilisateur choisit aussi aller simple ou aller-retour (REQ-002), ce qui rend applicable le filtre « type de sortie » du trajet conseillé (`SPEC-TRAIL-07`, AC-3) ; la distance saisie porte sur toute la sortie ; en aller-retour, le retour se fait par le même tracé inversé (`SPEC-TRAIL-01`).
-- *24/11/2026* — Correspondance entre le niveau de l'utilisateur (paliers de VMA, R-20) et les traces suggérées. R-20 dit que le profil influe sur le temps de parcours, pas sur la difficulté : le niveau doit-il filtrer par cotation, par distance ou par durée estimée ? Hypothèse retenue, conforme à R-20 : le niveau (palier de VMA) borne la **durée estimée** de la trace (calculée par `CALC`, REQ-005), jamais sa cotation, selon une correspondance palier → durée cible paramétrable. Ce paramètre ne figure pas dans la liste de REQ-115 (ARB-002).
+- *24/11/2026* — Correspondance entre le niveau de l'utilisateur (paliers de VMA, R-20) et les traces suggérées. R-20 dit que le profil influe sur le temps de parcours, pas sur la difficulté : le niveau doit-il filtrer par cotation, par distance ou par durée estimée ? Hypothèse retenue, conforme à R-20 : le niveau (palier de VMA) borne la **durée estimée** de la trace sur toute la sortie (aller et retour en aller-retour ; calculée par `CALC`, REQ-005), jamais sa cotation, selon une correspondance paramétrable palier → **plage de durée cible [durée min ; durée max]**. Le palier n'agit jamais sur la cotation (R-20) ; seule une difficulté maximale saisie par l'utilisateur peut écarter une trace par sa cotation. Ce paramètre ne figure pas dans la liste de REQ-115 (ARB-002).
 - *24/11/2026* — « Niveau souhaité » : choisi librement par l'utilisateur, ou toujours déduit de sa VMA. Hypothèse retenue : toujours déduit de la VMA (R-20), ou niveau par défaut signalé sans VMA (R-17) ; l'utilisateur ne choisit pas son niveau. Cette lecture restreint le mot « souhaité » de REQ-010 : à confirmer à la recette.
 - *24/11/2026* — Combinaison distance + niveau dans une même demande.
 - *24/11/2026* — Critère de choix entre plusieurs traces. Le critère de `SPEC-TRAIL-02` (le plus court) n'a pas de sens pour une plage de distance : il retiendrait toujours une trace proche du minimum. Hypothèse retenue : par distance, la trace la plus proche du milieu de la plage.
@@ -354,10 +365,12 @@ Scénario : Suggestion par niveau, VMA absente
 ### Critères d'acceptation
 
 - [ ] AC-1 — Une suggestion par distance renvoie une trace sur sentiers du référentiel dont la longueur est dans la plage saisie (`CASE-TRAIL-14`).
-- [ ] AC-2 — La trace suggérée par niveau a une durée estimée compatible avec la durée cible du palier de VMA (correspondance paramétrable), et sa cotation officielle n'intervient pas dans le choix (R-20) (`CASE-TRAIL-15`).
-- [ ] AC-3 — Sans VMA, le niveau par défaut est utilisé et l'utilisateur en est averti (`CASE-TRAIL-16`).
+- [ ] AC-2 — La trace suggérée par niveau a une durée estimée (`SPEC-CALC-01`), sur toute la sortie, comprise dans la plage de durée cible du palier de VMA de l'utilisateur (paramètre à valider à la recette, ARB-002) ; le palier de VMA n'agit jamais sur la cotation (R-20) ; seule une difficulté maximale saisie par l'utilisateur (`SPEC-TRAIL-01`) peut écarter une trace par sa cotation (`CASE-TRAIL-15`).
+- [ ] AC-3 — Sans VMA, le niveau par défaut (`SPEC-CALC-02`, déduit de la VMA par défaut, R-17) est utilisé et l'utilisateur en est averti (`CASE-TRAIL-16`).
 - [ ] AC-4 — Sans trace possible dans la plage, la contrainte est indiquée et une trace proche est proposée (`CASE-TRAIL-17`).
-- [ ] AC-5 — L'heure de départ est pré-remplie, saisie et contrôlée comme dans le mode départ → arrivée, le type de sortie (aller simple ou aller-retour) est choisi par l'utilisateur, et tous deux servent au calcul des heures de passage de la trace suggérée (`CASE-TRAIL-33`).
+- [ ] AC-5 — L'heure de départ est pré-remplie, saisie et contrôlée comme dans le mode départ → arrivée, le type de sortie (aller simple ou aller-retour) est choisi par l'utilisateur, et tous deux servent au calcul des heures de passage de la trace suggérée ; le dénivelé accepté et la difficulté maximale, s'ils sont saisis, sont transmis comme filtres (`CASE-TRAIL-33`).
+- [ ] AC-6 — Une plage de distance invalide (minimum supérieur au maximum, valeur nulle, négative ou non numérique) est refusée avec un message (`CASE-TRAIL-41`).
+- [ ] AC-7 — Quand plusieurs traces conviennent, la trace suggérée par distance est celle dont la longueur est la plus proche du milieu de la plage (hypothèse) (`CASE-TRAIL-42`).
 
 ### Revue IA
 
@@ -369,6 +382,9 @@ Scénario : Suggestion par niveau, VMA absente
 | Aucune heure de départ n'est saisie dans ce mode : les heures de passage, l'état des sentiers et le trajet conseillé ne peuvent pas être calculés. | Acceptée | Heure de départ ajoutée (portée, scénario, cas limite 6, hypothèse, AC-5 → `CASE-TRAIL-33`, numéro ajouté à la suite). |
 | Validation itération 1 (A-16, critique) : AC-2 « tient compte du palier » n'est pas testable. | Acceptée | Hypothèse conforme à R-20 (niveau → durée cible, jamais cotation) ; scénario et AC-2 réécrits ; paramètre « durée cible par palier » inscrit dans ARB-002. |
 | Validation itération 1 (A-15, A-17, V-05) : tolérance de distance, type de sortie, état des sentiers dans la suggestion. | Acceptée (A-15 sans tolérance) | Tolérance rejetée (hors REQ-115) ; type de sortie ajouté (portée, hypothèse, AC-5) ; hypothèse sur l'état des sentiers alignée sur `SPEC-TRAIL-02`. |
+| Validation itération 2 (C-03, C-04, V-04) : « compatible avec la durée cible » sans oracle ; contradiction avec la difficulté maximale facultative ; cas sans trace dans la plage de durée. | Acceptée | Plage de durée cible [min ; max] sur toute la sortie (hypothèse, AC-2, scénario ; ARB-002 mis à jour) ; formulation R-20 corrigée ; cas limite 7 ajouté. |
+| Validation itération 2 (C-05) : « niveau par défaut » absent du CDC. | Partiellement acceptée | Terme conservé (défini dans `SPEC-CALC-02`, déduit de la VMA par défaut, R-17) ; renvoi ajouté dans la portée et AC-3. |
+| Validation itération 2 (C-06 a, C-15 a, V-06) : filtres facultatifs absents de la portée et d'AC-5 ; REQ-005 non cité ; cas limites 2, 3 et 5 sans AC. | Acceptée | Portée et AC-5 complétés ; REQ-005 ajouté à l'en-tête ; AC-6 (`CASE-TRAIL-41`) et AC-7 (`CASE-TRAIL-42`) ajoutés. |
 
 ---
 
@@ -376,7 +392,7 @@ Scénario : Suggestion par niveau, VMA absente
 
 **Exigence :** REQ-004, REQ-026 (partiel : affichage sur le trajet choisi et le trajet conseillé ; avec `ADMIN`) (avec règles R-02, R-03, R-06, R-07, R-08, R-11 ; REQ-103, REQ-104)
 **Statut :** revue IA faite
-**Version :** v5 (24/11/2026)
+**Version :** v7 (25/11/2026)
 
 ### Règle
 
@@ -386,9 +402,11 @@ Scénario : Suggestion par niveau, VMA absente
 > déclenchée par la météo prévue à l'heure estimée de passage. Un état forcé par
 > l'administrateur remplace l'information reçue automatiquement.
 
-Au sens de R-02, un sentier *désactivé* est un sentier affiché « fermé » ou « désactivé par une règle de sécurité » (REQ-004). Une alerte rattachée par l'administrateur (R-11) s'affiche sans désactiver le sentier : seule une fermeture (source ou forçage) ou une règle de sécurité le désactive (R-02).
+Au sens de R-02, un sentier *désactivé* est un sentier affiché « fermé » ou « désactivé par une règle de sécurité » (REQ-004). Une alerte rattachée par l'administrateur (R-11) s'affiche sans désactiver le sentier : seule une fermeture (source ou forçage) ou une règle de sécurité le désactive (R-02). Une alerte R-11 est affichée si elle est en cours à l'instant de l'affichage, même si elle expire avant l'heure estimée de passage (arbitrage ARB-005, question a, 25/11/2026).
 
-Au sens de R-08, l'« information reçue automatiquement » que remplace un forçage est l'état reçu de la source ; les règles de sécurité continuent de s'appliquer à un sentier forcé, y compris forcé « ouvert » (hypothèse en attente d'arbitrage, ARB-004). Ordre de priorité : l'état forcé en cours remplace l'état reçu de la source ; les règles de sécurité sont ensuite évaluées sur cet état. Un état « ouvert » (reçu ou forcé) dont une règle est déclenchée est affiché « désactivé par une règle de sécurité » (cas limite 7) ; un état « fermé » (reçu ou forcé) reste affiché « fermé », la règle déclenchée étant mentionnée dans l'alerte (cas limite 6).
+Au sens de R-08, l'« information reçue automatiquement » que remplace un forçage est l'état reçu de la source ; les règles de sécurité continuent de s'appliquer à un sentier forcé, y compris forcé « ouvert » (arbitrage ARB-004, 25/11/2026 : lecture restrictive). L'administrateur ne peut donc pas lever par un forçage une désactivation par règle de sécurité. Ordre de priorité : l'état forcé en cours remplace l'état reçu de la source ; les règles de sécurité sont ensuite évaluées sur cet état. Un état « ouvert » (reçu ou forcé) dont une règle est déclenchée est affiché « désactivé par une règle de sécurité » (cas limite 7) ; un état « fermé » (reçu ou forcé) reste affiché « fermé », la règle déclenchée étant mentionnée dans l'alerte (cas limite 6).
+
+Sentier à *état inconnu* (arbitrage ARB-003, 25/11/2026) : ce terme désigne, dans cette spec et dans `SPEC-TRAIL-07`, un sentier dont la source d'état est indisponible ou périmée, ou dont une règle de sécurité n'est pas évaluable faute de prévision. L'état est affiché « inconnu — source indisponible » (ou la règle « non évaluable ») : c'est la forme du message R-07 / REQ-103, pas un quatrième état métier. Le message invite l'utilisateur à vérifier l'état avant de partir ; aucun état ni aucune valeur n'est inventé. Le sentier n'est pas désactivé au sens de R-02 : dans le trajet choisi, il ne déclenche pas de trajet conseillé (question a) ; il écarte tout candidat au trajet conseillé qui l'emprunte (question b, `SPEC-TRAIL-07`). L'enjeu de sécurité de la question a est accepté : l'utilisateur peut partir sur un sentier réellement fermé sans alternative proposée ; le message d'indisponibilité est la seule protection.
 
 ### Portée
 
@@ -396,11 +414,11 @@ Au sens de R-08, l'« information reçue automatiquement » que remplace un for�
 - Couvre l'ordre de priorité entre état forcé par l'administrateur, état reçu de la source et règles de sécurité.
 - Couvre l'affichage de l'état et de sa date, et l'alerte sur un sentier fermé ou désactivé.
 - Couvre le cas d'une source d'état ou de météo indisponible ou périmée (R-07).
+- Couvre l'affichage, pour chaque sentier emprunté par le trajet choisi ou le trajet conseillé, des alertes en cours que l'administrateur y a rattachées (ex. : éboulement signalé, travaux) (REQ-026, R-11).
 - Ne couvre pas la saisie du forçage par l'administrateur → domaine `ADMIN` (REQ-021).
 - Ne couvre pas le contenu et les seuils des règles de sécurité de chaque sentier → domaine `REF` (REQ-023).
 - Ne couvre pas la collecte des états et des prévisions → domaine `METEO`.
 - Ne couvre pas le paramétrage de l'âge maximal d'une donnée → domaine `ARCH` (REQ-115).
-- Couvre l'affichage, pour chaque sentier emprunté par le trajet choisi ou le trajet conseillé, des alertes en cours que l'administrateur y a rattachées (ex. : éboulement signalé, travaux) (REQ-026, R-11).
 - Ne couvre pas la création, la modification et le retrait de ces alertes → domaine `ADMIN` (REQ-022).
 
 ### Scénarios nominaux
@@ -432,6 +450,20 @@ Scénario : Alerte administrateur sur un sentier emprunté
   Quand le trajet choisi qui emprunte « S4 » est affiché le 24/11/2026
   Alors l'alerte « éboulement signalé » est affichée pour « S4 »
   Et « S4 » reste affiché « ouvert » et n'est pas désactivé
+
+Scénario : Alerte administrateur sur un sentier du trajet conseillé
+  Étant donné un trajet conseillé qui emprunte le sentier « S4 »
+  Et une alerte en cours rattachée par l'administrateur à « S4 »
+  Quand le trajet conseillé est affiché
+  Alors l'alerte est affichée pour « S4 »
+
+Scénario : Forçage « ouvert » et règle de sécurité déclenchée (arbitrage ARB-004)
+  Étant donné un sentier « S2 » du panel pilote déclaré fermé par la source
+  Et que l'administrateur a forcé « S2 » à l'état ouvert
+  Et que la pluie prévue à l'heure estimée de passage dépasse le seuil de sa règle « radier submersible »
+  Quand le trajet choisi est affiché
+  Alors « S2 » est affiché « désactivé par une règle de sécurité »
+  Et l'alerte nomme la règle, l'heure de passage et mentionne le forçage « ouvert » et sa date
 ```
 
 ### Cas limites
@@ -441,19 +473,17 @@ Scénario : Alerte administrateur sur un sentier emprunté
 | 1 | Forçage arrivé à expiration | L'état reçu de la source s'applique de nouveau. |
 | 1 bis | Forçage sans limite (REQ-021), puis retiré par l'administrateur | L'état reçu de la source s'applique de nouveau dès le retrait (R-08). |
 | 2 | Aller-retour : règle non déclenchée à l'aller, déclenchée au retour | Le sentier est désactivé pour la sortie ; l'alerte précise le passage concerné (retour). |
-| 3 | Source d'état du sentier indisponible ou périmée | État affiché « inconnu — source indisponible », avec un message d'indisponibilité qui invite l'utilisateur à vérifier l'état du sentier avant de partir ; aucun état inventé (R-07, REQ-103). Le sentier n'est pas désactivé : il ne déclenche pas de trajet conseillé (`SPEC-TRAIL-07`, cas limite 8) et il écarte tout candidat au trajet conseillé qui l'emprunte (`SPEC-TRAIL-07`, cas limite 3) (hypothèse en attente d'arbitrage, ARB-003). |
-| 4 | Prévision météo indisponible pour la zone d'un sentier qui a des règles, y compris pour un passage estimé après la fin de l'horizon horaire de la source (cas limite 8 de `SPEC-TRAIL-01`) | La règle est affichée « non évaluable », avec le même message d'indisponibilité et la même invitation à vérifier avant de partir ; aucune valeur de remplacement (R-07, REQ-103). Même traitement que le cas limite 3 (hypothèse en attente d'arbitrage, ARB-003). |
+| 3 | Source d'état du sentier indisponible ou périmée | État affiché « inconnu — source indisponible », avec un message d'indisponibilité qui invite l'utilisateur à vérifier l'état du sentier avant de partir ; aucun état inventé (R-07, REQ-103). Le sentier n'est pas désactivé : il ne déclenche pas de trajet conseillé (`SPEC-TRAIL-07`, cas limite 8) et il écarte tout candidat au trajet conseillé qui l'emprunte (`SPEC-TRAIL-07`, cas limite 3) (arbitrage ARB-003). |
+| 4 | Prévision météo indisponible pour la zone d'un sentier qui a des règles, y compris pour un passage estimé après la fin de l'horizon horaire de la source (par exemple une arrivée tardive, `SPEC-TRAIL-01` cas limite 8) | La règle est affichée « non évaluable », avec le même message d'indisponibilité et la même invitation à vérifier avant de partir ; aucune valeur de remplacement (R-07, REQ-103). Même traitement que le cas limite 3 (arbitrage ARB-003). |
 | 5 | Sentier hors panel pilote | Pas de règle de sécurité ; état ouvert ou fermé uniquement (R-06, REQ-023, R-19). |
 | 6 | Sentier fermé et règle déclenchée en même temps | L'état « fermé » est affiché, la règle déclenchée est mentionnée dans l'alerte. |
-| 7 | Sentier forcé « ouvert » par l'administrateur (ex. : déclaré fermé par la source, radier réparé) dont une règle de sécurité est déclenchée | Affiché « désactivé par une règle de sécurité » : le forçage ne lève pas la désactivation. L'alerte nomme la règle déclenchée et l'heure de passage concernée, et mentionne que le sentier est forcé « ouvert » par l'administrateur, avec la date du forçage (hypothèse restrictive en attente d'arbitrage, ARB-004). Sans règle déclenchée, le sentier est affiché « ouvert » (le forçage remplace l'état reçu, AC-2). |
+| 7 | Sentier forcé « ouvert » par l'administrateur (ex. : déclaré fermé par la source, radier réparé) dont une règle de sécurité est déclenchée | Affiché « désactivé par une règle de sécurité » : le forçage ne lève pas la désactivation. L'alerte nomme la règle déclenchée et l'heure de passage concernée, et mentionne que le sentier est forcé « ouvert » par l'administrateur, avec la date du forçage (arbitrage ARB-004 : lecture restrictive). Sans règle déclenchée, le sentier est affiché « ouvert » (le forçage remplace l'état reçu, AC-2). |
 | 8 | Alerte administrateur expirée ou retirée | Elle n'est plus affichée (R-11). |
+| 9 | Alerte administrateur sans limite de durée (R-11, REQ-022) | Affichée tant qu'elle n'est pas retirée par l'administrateur. |
+| 10 | Alerte administrateur en cours à l'affichage, qui expire avant l'heure estimée de passage sur le sentier | Affichée (arbitrage ARB-005, question a). |
 
 ### Ce qui n'est pas défini
 
-- *24/11/2026* — Conflit entre R-02 (« disponible par défaut ») et R-07 (aucune valeur inventée) quand la source d'état est indisponible. Hypothèse retenue en attendant l'arbitrage ARB-003 : l'état est affiché « inconnu — source indisponible » (forme du message R-07 / REQ-103, pas un quatrième état métier), avec une invitation à vérifier l'état avant de partir ; le sentier n'est pas désactivé dans le trajet choisi, mais il n'est jamais retenu dans un trajet conseillé (ARB-003, question b : candidat écarté). Conforme à R-07 ; R-02 muet sur ce cas.
-- *24/11/2026* — Même question quand une règle de sécurité n'est pas évaluable faute de prévision. Hypothèse retenue en attendant l'arbitrage ARB-003 : même traitement que ci-dessus (« état inconnu » désigne dans cette spec et dans `SPEC-TRAIL-07` les deux situations).
-- *24/11/2026* — Un sentier à l'état inconnu, ou dont une règle n'est pas évaluable, déclenche-t-il un trajet conseillé ? Hypothèse retenue en attendant l'arbitrage ARB-003 (question a) : non, puisqu'il n'est pas désactivé ; le message d'indisponibilité reste affiché et invite l'utilisateur à vérifier l'état avant de partir. Enjeu de sécurité : l'utilisateur peut partir sur un sentier réellement fermé sans alternative proposée.
-- *24/11/2026* — Portée du forçage face aux règles de sécurité (REQ-004, REQ-021 ; R-02, R-06, R-08) : un forçage « ouvert » lève-t-il une désactivation par règle de sécurité (ex. : radier réparé, règle devenue inadaptée) ? Hypothèse retenue en attendant l'arbitrage ARB-004 : lecture restrictive (prudente) — le forçage remplace l'état reçu de la source, les règles de sécurité continuent de s'appliquer ; l'alerte mentionne le forçage (cas limite 7, AC-7). Enjeu : avec cette lecture, l'administrateur ne peut pas corriger une désactivation erronée par un forçage ; la lecture large permettrait à un forçage de masquer un danger météo réel.
 - *24/11/2026* — Date affichée pour un sentier désactivé par une règle de sécurité (REQ-004, REQ-104). Hypothèse retenue : la date de la prévision météo utilisée pour évaluer la règle.
 
 ### Critères d'acceptation
@@ -461,10 +491,10 @@ Scénario : Alerte administrateur sur un sentier emprunté
 - [ ] AC-1 — Chaque sentier emprunté affiche son état et la date de l'information ; pour une désactivation par règle, la date de la prévision utilisée (REQ-004, REQ-104) (`CASE-TRAIL-18`).
 - [ ] AC-2 — Un état forcé par l'administrateur prime sur l'état reçu de la source tant que le forçage est en cours (durée non expirée et non retiré) ; il ne prime pas sur les règles de sécurité (AC-7) (`CASE-TRAIL-19`).
 - [ ] AC-3 — Une règle de sécurité déclenchée à l'heure estimée de passage, aller ou retour, désactive le sentier et produit une alerte qui la nomme (`CASE-TRAIL-20`).
-- [ ] AC-4 — Une source d'état indisponible ou périmée, ou une prévision indisponible pour une règle de sécurité, produit pour le sentier concerné un message d'indisponibilité qui invite à vérifier l'état avant de partir, sans état ni valeur inventés ; le sentier n'est pas désactivé (R-07, REQ-103 ; hypothèse ARB-003) (`CASE-TRAIL-21`).
+- [ ] AC-4 — Une source d'état indisponible ou périmée, ou une prévision indisponible pour une règle de sécurité, produit pour le sentier concerné un message d'indisponibilité qui invite à vérifier l'état avant de partir, sans état ni valeur inventés ; le sentier n'est pas désactivé (R-07, REQ-103 ; arbitrage ARB-003) (`CASE-TRAIL-21`).
 - [ ] AC-5 — Un sentier hors panel pilote n'est jamais désactivé par une règle de sécurité (`CASE-TRAIL-22`).
-- [ ] AC-6 — Toute alerte en cours rattachée par l'administrateur à un sentier emprunté s'affiche sur le trajet choisi et, le cas échéant, sur le trajet conseillé ; elle ne désactive pas le sentier et ne déclenche pas de trajet conseillé ; une alerte expirée ou retirée ne s'affiche plus (REQ-026, R-11) (`CASE-TRAIL-34`).
-- [ ] AC-7 — Un sentier forcé « ouvert » dont une règle de sécurité est déclenchée à l'heure estimée de passage est affiché « désactivé par une règle de sécurité » ; l'alerte nomme la règle et mentionne le forçage et sa date (hypothèse restrictive en attente d'arbitrage, ARB-004) (`CASE-TRAIL-35`).
+- [ ] AC-6 — Toute alerte en cours à l'affichage, rattachée par l'administrateur à un sentier emprunté, s'affiche sur le trajet choisi et, le cas échéant, sur le trajet conseillé, même si elle expire avant l'heure estimée de passage (arbitrage ARB-005, question a) ; elle ne désactive pas le sentier et ne déclenche pas de trajet conseillé ; une alerte expirée ou retirée ne s'affiche plus ; une alerte sans limite reste affichée jusqu'à son retrait (REQ-026, R-11) (`CASE-TRAIL-34`).
+- [ ] AC-7 — Un sentier forcé « ouvert » dont une règle de sécurité est déclenchée à l'heure estimée de passage est affiché « désactivé par une règle de sécurité » ; l'alerte nomme la règle et mentionne le forçage et sa date (arbitrage ARB-004 : lecture restrictive) (`CASE-TRAIL-35`).
 
 ### Revue IA
 
@@ -478,6 +508,10 @@ Scénario : Alerte administrateur sur un sentier emprunté
 | Validation itération 1 (A-05, A-10, A-11, A-19, V-03, V-06) : traçabilité REQ-103/104, état inconnu, hors panel, retrait du forçage, date d'une désactivation par règle, horizon horaire. | Acceptée | En-tête, cas limites 1 bis, 4, 5, hypothèses et AC-1, AC-2, AC-4 complétés ; état inconnu renvoyé à ARB-003. |
 | ARB-003 (en attente) : appliquer l'hypothèse retenue en attendant l'arbitrage — (a) un sentier à état inconnu ne déclenche pas le trajet conseillé, message et invitation à vérifier ; (b) un candidat qui en emprunte un est écarté. | Acceptée (v4) | Cas limites 3 et 4, hypothèses et AC-4 alignés sur ARB-003 ; règle non évaluable traitée comme un état inconnu ; enjeu de sécurité rappelé. |
 | ARB-004 (en attente) : appliquer l'hypothèse retenue en attendant l'arbitrage — lecture restrictive : le forçage remplace l'état reçu de la source, les règles de sécurité continuent de s'appliquer ; l'alerte mentionne le forçage. | Acceptée (v5) | Lecture de R-08 et ordre de priorité posés sous la règle ; cas limite 7, hypothèse, AC-2 et AC-7 alignés sur ARB-004 ; enjeu rappelé. |
+| Validation itération 2 (C-08, V-05) : alerte R-11 non montrée sur le trajet conseillé ; alerte sans limite absente ; instant d'évaluation d'une alerte non fixé. | Acceptée (v6) | Scénario « trajet conseillé » ajouté ; cas limite 9 et AC-6 complétés ; hypothèse datée (ARB-005). |
+| Validation itération 2 (C-10, C-13, C-14) : pas de scénario pour le cas limite 7 ; renvoi elliptique du cas limite 4 ; puce « Couvre » mal placée. | Acceptée (v6) | Scénario « Forçage « ouvert » et règle de sécurité déclenchée » ajouté ; renvoi reformulé (conservé) ; portée réordonnée. |
+| Validation itération 2 (C-15 b) : R-19 cité à tort au cas limite 5. | Rejetée | R-19 est la seule phrase du CDC qui pose qu'un sentier hors panel n'a pas de règles propres (grille générale seule) ; citation conservée. |
+| Arbitrage humain du 25/11/2026 : ARB-003, ARB-004 et ARB-005 (question a) tranchés ; les hypothèses en place sont validées telles quelles. | Acceptée (v7) | Décisions posées sous la règle (état inconnu, lecture restrictive du forçage, instant d'évaluation d'une alerte) ; entrées correspondantes retirées de « Ce qui n'est pas défini » ; cas limites 3, 4 et 7, scénario « Forçage « ouvert » », AC-4 et AC-7 renvoient à la décision ; cas limite 10 ajouté et AC-6 précisé (ARB-005 a). |
 
 ---
 
@@ -549,7 +583,7 @@ Scénario : Difficulté indépendante du profil
 
 **Exigence :** REQ-008 (avec règles R-01, R-02, R-03, R-04, R-06, R-07, R-19 ; REQ-103)
 **Statut :** revue IA faite
-**Version :** v4 (24/11/2026)
+**Version :** v6 (25/11/2026)
 
 ### Règle
 
@@ -559,12 +593,18 @@ Scénario : Difficulté indépendante du profil
 > l'utilisateur. Il peut se situer dans un autre secteur. L'adaptation se fait pendant la
 > préparation seulement, en changeant de tracé, jamais en proposant un autre horaire.
 
+Décisions d'arbitrage du 25/11/2026 :
+
+- *Sentier à état inconnu* (au sens de `SPEC-TRAIL-05` ; ARB-003) : dans le trajet choisi, il ne déclenche pas de trajet conseillé, puisqu'il n'est pas désactivé au sens de R-02 ; le message d'indisponibilité invite à vérifier l'état avant de partir (question a). Un candidat qui l'emprunte, à l'aller ou au retour, est écarté : « disponible à l'heure estimée de passage » (AC-2) exige un état connu et toutes les règles évaluées (question b). L'enjeu de sécurité de la question a est accepté : l'utilisateur peut partir sur un sentier réellement fermé sans alternative proposée.
+- *Candidat qui emprunte un sentier sous alerte R-11 en cours* (ARB-005, question b) : il est admissible, puisqu'une alerte R-11 ne désactive pas un sentier (R-02) ; l'alerte est affichée (`SPEC-TRAIL-05`, AC-6) ; à verdict égal, un candidat sans alerte est préféré.
+- *Plage de distance ou de durée du mode `SPEC-TRAIL-04`* (ARB-006) : elle n'est pas un filtre du trajet conseillé ; seuls les filtres de `SPEC-TRAIL-01` s'appliquent. Un utilisateur qui demande 40 à 50 km peut recevoir un trajet conseillé nettement plus court, dans un autre secteur ; l'écart est expliqué par `SPEC-CALC-07` (REQ-009).
+
 ### Portée
 
 - Couvre le déclenchement du trajet conseillé par un sentier désactivé du trajet choisi.
 - Couvre les contraintes du trajet conseillé : sentiers du panel pilote, aucun sentier désactivé, filtres de l'utilisateur (`SPEC-TRAIL-01`).
 - Couvre l'affichage côte à côte du trajet choisi et du trajet conseillé.
-- Couvre le message « trajet conseillé non disponible » hors panel pilote ou sans candidat.
+- Couvre les messages d'absence de trajet conseillé : « trajet conseillé non disponible pour ce parcours » (sentier désactivé hors panel pilote, REQ-008) et « aucun trajet conseillé disponible » (aucun candidat valide).
 - Couvre l'absence de proposition d'un autre horaire de départ (R-04).
 - Ne couvre pas l'explication en langage courant de l'écart entre les deux trajets → domaine `CALC` (REQ-009).
 - Ne couvre pas le verdict favorable / défavorable / à risque et l'alerte de vigilance officielle → domaine `CALC` (REQ-029).
@@ -608,7 +648,7 @@ Scénario : Trajet choisi hors panel pilote
   Quand le trajet choisi est affiché
   Alors un message indique que le trajet conseillé n'est pas disponible pour ce parcours
 
-Scénario : Sentier à état inconnu dans le trajet choisi (hypothèse ARB-003, question a)
+Scénario : Sentier à état inconnu dans le trajet choisi (arbitrage ARB-003, question a)
   Étant donné un trajet choisi qui emprunte le sentier « S6 » du panel pilote
   Et que la source d'état de « S6 » est indisponible
   Et qu'aucun sentier du trajet choisi n'est fermé ni désactivé par une règle de sécurité
@@ -617,8 +657,8 @@ Scénario : Sentier à état inconnu dans le trajet choisi (hypothèse ARB-003, 
   Et un message invite l'utilisateur à vérifier l'état de « S6 » avant de partir
   Et aucun trajet conseillé n'est affiché
 
-Scénario : Candidat écarté pour un sentier à état inconnu (hypothèse ARB-003, question b)
-  Étant donné un trajet choisi « La Possession → Mafate » qui emprunte le sentier « S2 »
+Scénario : Candidat écarté pour un sentier à état inconnu (arbitrage ARB-003, question b)
+  Étant donné un trajet choisi « La Possession → Mafate » en aller-retour qui emprunte le sentier « S2 »
   Et que « S2 » est désactivé par sa règle « radier submersible » à l'heure estimée de passage
   Et que la variante V1 du panel pilote évite « S2 » mais emprunte le sentier « S7 »
   Et que la prévision météo de la zone de « S7 » est indisponible à l'heure estimée de passage du retour
@@ -635,36 +675,39 @@ Scénario : Candidat écarté pour un sentier à état inconnu (hypothèse ARB-0
 |---|---|---|
 | 1 | Aucun candidat du panel pilote disponible et conforme aux filtres | Message « aucun trajet conseillé disponible » ; le trajet choisi reste affiché avec ses alertes. |
 | 2 | Sentier du candidat disponible à l'aller mais désactivé au retour | Le candidat est écarté. |
-| 3 | Candidat dont un sentier a un état inconnu (source indisponible) ou une règle non évaluable (prévision indisponible), à l'aller ou au retour | Le candidat est écarté (hypothèse en attente d'arbitrage, ARB-003 question b ; `SPEC-TRAIL-05`, cas limites 3 et 4). |
+| 3 | Candidat dont un sentier a un état inconnu (source indisponible) ou une règle non évaluable (prévision indisponible), à l'aller ou au retour | Le candidat est écarté (arbitrage ARB-003, question b ; `SPEC-TRAIL-05`, cas limites 3 et 4). |
 | 4 | Un départ plus tôt rendrait le trajet choisi praticable | Aucun autre horaire n'est proposé (R-04). |
 | 5 | L'utilisateur modifie lui-même son heure de départ | Recalcul complet ; c'est sa saisie, pas une proposition de l'application. |
 | 6 | Trajet choisi partiellement dans le panel pilote | Le trajet conseillé est calculé dès qu'un sentier désactivé du trajet choisi appartient au panel pilote ; si le seul sentier désactivé est hors panel, le message « trajet conseillé non disponible » s'affiche (hypothèse, voir « Ce qui n'est pas défini »). |
 | 7 | Verdict « à risque » sans aucun sentier désactivé | Aucun trajet conseillé ; le verdict relève du domaine `CALC`. |
-| 8 | Trajet choisi dont un sentier a un état inconnu ou une règle non évaluable, sans aucun sentier désactivé | Aucun trajet conseillé ; le message d'indisponibilité reste affiché et invite l'utilisateur à vérifier l'état du sentier avant de partir (hypothèse en attente d'arbitrage, ARB-003 question a ; `SPEC-TRAIL-05`, cas limites 3 et 4). |
+| 8 | Trajet choisi dont un sentier a un état inconnu ou une règle non évaluable, sans aucun sentier désactivé | Aucun trajet conseillé ; le message d'indisponibilité reste affiché et invite l'utilisateur à vérifier l'état du sentier avant de partir (arbitrage ARB-003, question a ; `SPEC-TRAIL-05`, cas limites 3 et 4). |
 | 9 | Vigilance officielle majeure sur le secteur (R-19) | L'alerte prioritaire s'affiche (domaine `CALC`). Le trajet conseillé n'est affiché que si un sentier du trajet choisi est désactivé, et il n'est jamais présenté comme favorable (hypothèse, voir « Ce qui n'est pas défini »). |
+| 10 | Deux candidats au même verdict, dont l'un emprunte un sentier sous alerte R-11 en cours | Les deux sont admissibles ; le candidat sans alerte est proposé (arbitrage ARB-005, question b). Si seul le candidat sous alerte existe, il est proposé et l'alerte est affichée. |
+| 11 | Mode `SPEC-TRAIL-04` : candidat dont la longueur ou la durée estimée sort de la plage demandée | Le candidat reste admissible : la plage n'est pas un filtre du trajet conseillé. S'il est retenu, l'écart avec la demande est expliqué (`SPEC-CALC-07`) (arbitrage ARB-006). |
 
 ### Ce qui n'est pas défini
 
-- *24/11/2026* — Critère de choix entre plusieurs trajets conseillés possibles. Hypothèse retenue : on considère d'abord les candidats qui gardent le départ et l'arrivée, sinon tous les candidats ; parmi eux, celui au meilleur verdict (calculé par `SPEC-CALC-06`, REQ-029, R-19) ; à verdict égal, y compris en vigilance officielle majeure où aucun candidat n'est favorable, le plus proche du point de départ.
+- *24/11/2026* — Critère de choix entre plusieurs trajets conseillés possibles. Hypothèse retenue : on considère d'abord les candidats qui gardent le départ et l'arrivée, sinon tous les candidats ; parmi eux, celui au meilleur verdict (calculé par `SPEC-CALC-06`, REQ-029, R-19) ; à verdict égal, un candidat sans alerte R-11 en cours (arbitrage ARB-005, question b) ; puis, y compris en vigilance officielle majeure où aucun candidat n'est favorable, le plus proche du point de départ.
 - *24/11/2026* — Distance maximale acceptable pour un trajet conseillé situé dans un autre secteur. Hypothèse retenue : aucun plafond de distance ; le panel pilote est limité à 3 parcours (REQ-023), tout parcours du panel est candidat et le départage suit l'hypothèse ci-dessus.
 - *24/11/2026* — Trajet choisi mêlant sentiers du panel pilote et sentiers hors panel : le trajet conseillé est-il calculé ? Hypothèse retenue (lecture de « ailleurs » de REQ-008 = sentier désactivé hors panel) : calculé dès qu'un sentier désactivé appartient au panel pilote ; si le seul sentier désactivé est hors panel, message « trajet conseillé non disponible ». Autre lecture possible (« ailleurs » = candidats hors panel) : un sentier désactivé hors panel déclencherait un trajet conseillé pris dans le panel. À valider à la recette.
-- *24/11/2026* — Filtres que respecte le trajet conseillé. Hypothèse retenue : ceux de `SPEC-TRAIL-01`, soit le type de sortie, le dénivelé accepté et la difficulté maximale si elle est saisie.
+- *24/11/2026* — Filtres que respecte le trajet conseillé. Hypothèse retenue : ceux de `SPEC-TRAIL-01`, soit le type de sortie, le dénivelé accepté et la difficulté maximale s'ils sont saisis (le dénivelé est facultatif dans le mode `SPEC-TRAIL-04`).
 - *24/11/2026* — Le trajet conseillé est-il ajustable par l'utilisateur comme le trajet choisi ?
 - *24/11/2026* — Contenu du panel pilote. Le CDC le définit comme 3 parcours (REQ-023), pas comme un ensemble de sentiers : une « variante » dans le même secteur n'existe que si le référentiel la déclare. Hypothèse retenue : le panel pilote comprend les sentiers des 3 parcours et leurs variantes déclarées dans le référentiel, chacune avec ses critères de sécurité (domaine `REF`).
 - *24/11/2026* — Trajet conseillé pendant une vigilance officielle majeure : affiché ou non. Hypothèse retenue : affiché selon les règles habituelles, avec l'alerte prioritaire, et jamais jugé favorable (R-19).
-- *24/11/2026* — Sentier à état inconnu (source indisponible ou règle non évaluable) : déclenchement du trajet conseillé et sort des candidats. Hypothèse retenue en attendant l'arbitrage ARB-003 : (a) dans le trajet choisi, il ne déclenche pas de trajet conseillé, puisqu'il n'est pas désactivé au sens de R-02 ; le message d'indisponibilité invite à vérifier l'état avant de partir ; (b) un candidat qui l'emprunte est écarté : « disponible à l'heure estimée de passage » (AC-2) exige un état connu et toutes les règles évaluées. Conforme à R-07 ; R-02 muet sur ce cas. Enjeu de sécurité de (a) : l'utilisateur peut partir sur un sentier réellement fermé sans alternative proposée.
 
 ### Critères d'acceptation
 
 - [ ] AC-1 — Un sentier du panel pilote désactivé au sens de R-02 (affiché « fermé » ou « désactivé par une règle de sécurité », `SPEC-TRAIL-05`) dans le trajet choisi déclenche l'affichage d'un trajet conseillé à côté du trajet choisi (`CASE-TRAIL-26`).
 - [ ] AC-2 — Le trajet conseillé n'emprunte que des sentiers du panel pilote disponibles à leur heure estimée de passage, aller et retour (`CASE-TRAIL-27`).
-- [ ] AC-3 — Le trajet conseillé respecte les filtres de `SPEC-TRAIL-01` (type de sortie, dénivelé accepté, difficulté maximale si elle est saisie), même s'il change de secteur (`CASE-TRAIL-28`).
-- [ ] AC-4 — Quand aucun sentier désactivé du trajet choisi n'appartient au panel pilote, un message indique que le trajet conseillé n'est pas disponible (`CASE-TRAIL-29`).
-- [ ] AC-5 — Sans sentier désactivé, aucun trajet conseillé n'est affiché (`CASE-TRAIL-30`).
-- [ ] AC-6 — Sans candidat valide, un message le dit et aucun tracé n'est inventé (`CASE-TRAIL-31`).
+- [ ] AC-3 — Le trajet conseillé respecte les filtres de `SPEC-TRAIL-01` (type de sortie ; dénivelé accepté et difficulté maximale s'ils sont saisis), même s'il change de secteur (`CASE-TRAIL-28`).
+- [ ] AC-4 — Quand le trajet choisi compte au moins un sentier désactivé au sens de R-02 et qu'aucun de ces sentiers désactivés n'appartient au panel pilote, le message « trajet conseillé non disponible pour ce parcours » s'affiche (REQ-008, cas limite 6) (`CASE-TRAIL-29`).
+- [ ] AC-5 — Sans sentier désactivé, aucun trajet conseillé ni message « trajet conseillé non disponible » n'est affiché (`CASE-TRAIL-30`).
+- [ ] AC-6 — Sans candidat valide, le message « aucun trajet conseillé disponible » s'affiche et aucun tracé n'est inventé (`CASE-TRAIL-31`).
 - [ ] AC-7 — L'application ne propose jamais d'autre horaire de départ (`CASE-TRAIL-32`).
-- [ ] AC-8 — Un sentier à état inconnu ou dont une règle n'est pas évaluable, dans un trajet choisi sans sentier désactivé, ne déclenche pas de trajet conseillé ; le message d'indisponibilité invite à vérifier l'état avant de partir (hypothèse ARB-003, question a) (`CASE-TRAIL-36`).
-- [ ] AC-9 — Un candidat au trajet conseillé dont un sentier est à état inconnu ou a une règle non évaluable, à l'aller ou au retour, est écarté (hypothèse ARB-003, question b) (`CASE-TRAIL-37`).
+- [ ] AC-8 — Un sentier à état inconnu ou dont une règle n'est pas évaluable, dans un trajet choisi sans sentier désactivé, ne déclenche pas de trajet conseillé ; le message d'indisponibilité invite à vérifier l'état avant de partir (arbitrage ARB-003, question a) (`CASE-TRAIL-36`).
+- [ ] AC-9 — Un candidat au trajet conseillé dont un sentier est à état inconnu ou a une règle non évaluable, à l'aller ou au retour, est écarté (arbitrage ARB-003, question b) (`CASE-TRAIL-37`).
+- [ ] AC-10 — Un candidat qui emprunte un sentier sous alerte R-11 en cours est admissible et l'alerte est affichée ; à verdict égal, un candidat sans alerte lui est préféré (arbitrage ARB-005, question b) (`CASE-TRAIL-43`).
+- [ ] AC-11 — En mode `SPEC-TRAIL-04`, la plage de distance ou de durée demandée n'écarte aucun candidat au trajet conseillé ; seuls les filtres de `SPEC-TRAIL-01` s'appliquent (arbitrage ARB-006) (`CASE-TRAIL-44`).
 
 ### Revue IA
 
@@ -676,3 +719,6 @@ Scénario : Candidat écarté pour un sentier à état inconnu (hypothèse ARB-0
 | Aucun cas ne traite l'état inconnu sans sentier désactivé, ni la vigilance officielle majeure (R-19). | Acceptée | Cas limites 8 et 9 ajoutés ; R-19 citée dans l'en-tête ; hypothèse sur la vigilance ajoutée. |
 | Validation itération 1 (A-06, A-09, A-20, A-21, V-04) : R-03/R-07 non cités, sens de « désactivé », trajet mixte, distance d'un autre secteur, départage par verdict. | Acceptée | En-tête complété ; AC-1 et AC-4 précisés ; scénario « sentier fermé par la source » ajouté ; cas limite 6 et hypothèses datées (à valider à la recette) ; renvoi à `SPEC-CALC-06`. |
 | ARB-003 (en attente) : appliquer l'hypothèse retenue en attendant l'arbitrage, et rendre testables les cas limites 3 et 8, qui n'avaient pas de critère d'acceptation. | Acceptée (v4) | Cas limites 3 et 8 étendus à la règle non évaluable ; hypothèse datée ajoutée ; scénarios « Sentier à état inconnu dans le trajet choisi » et « Candidat écarté pour un sentier à état inconnu » ajoutés ; AC-8 (`CASE-TRAIL-36`) et AC-9 (`CASE-TRAIL-37`) ajoutés, numéros à la suite ; REQ-103 cité dans l'en-tête. |
+| Validation itération 2 (C-02, critique) : AC-4 était vrai sans aucun sentier désactivé et contredisait AC-5. | Acceptée (v5) | AC-4 restreint au cas « au moins un sentier désactivé, aucun dans le panel » ; AC-5 complété. |
+| Validation itération 2 (C-06 b-c, C-07, V-03, V-07) : filtres facultatifs, distance du mode 04, aller-retour du scénario « Candidat écarté », deux messages d'absence confondus, candidat portant une alerte R-11. | Acceptée (v5) | AC-3 et hypothèse des filtres précisés ; hypothèses datées (ARB-005, ARB-006) ; scénario déclaré en aller-retour ; portée et AC-6 distinguent les deux messages. |
+| Arbitrage humain du 25/11/2026 : ARB-003, ARB-005 (question b) et ARB-006 tranchés ; les hypothèses en place sont validées telles quelles. | Acceptée (v6) | Décisions posées sous la règle ; entrées correspondantes retirées de « Ce qui n'est pas défini » ; critère de choix complété (verdict, puis absence d'alerte R-11, puis proximité) ; cas limites 3 et 8, scénarios « état inconnu », AC-8 et AC-9 renvoient à la décision ; cas limites 10 et 11, AC-10 (`CASE-TRAIL-43`) et AC-11 (`CASE-TRAIL-44`) ajoutés, numéros à la suite. |
