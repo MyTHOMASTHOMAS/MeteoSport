@@ -29,7 +29,7 @@ Gabarit : `ADR-000-template.md`.
 
 ### `ADR-003` — Externalisation et validation du paramétrage au déploiement
 - **Domaines concernés :** `ARCH`, `METEO`, `CALC`, `GPX`, `AUTH`
-- **Décisions à trancher :** Format et chargement des paramètres externalisés sans modification du code (`REQ-108`, `REQ-115` et paramètres ajoutés par les specs : paliers VMA, valeurs par défaut, seuils, âges maximaux, découpage météo, tolérances GPX, blocage connexion). Règles de validation au démarrage : refus bloquant si deux zones météo se chevauchent (`SPEC-METEO-02` AC-3) et signalement non bloquant si une zone référencée par un spot ou un critère pilote disparaît (`SPEC-METEO-02` AC-5).
+- **Décisions à trancher :** Format et chargement des paramètres externalisés sans modification du code (`REQ-108`, `REQ-115` et paramètres ajoutés par les specs et les ADR : paliers VMA, valeurs par défaut, seuils, âges maximaux, découpage météo, tolérances GPX, seuil et durée du blocage de connexion, durée d'inactivité des sessions, durée de validité du lien de réinitialisation et serveur SMTP (`ADR-004`), durée de conservation de l'historique des pluies (`ADR-002`), durée de conservation des données personnelles une fois `ZO-26` tranchée). Règles de validation au démarrage : refus bloquant si deux zones météo se chevauchent (`SPEC-METEO-02` AC-3) et signalement non bloquant si une zone référencée par un spot ou un critère pilote disparaît (`SPEC-METEO-02` AC-5).
 
 ### `ADR-004` — Authentification, sessions multi-appareils, sécurité et RGPD
 - **Domaines concernés :** `AUTH`, `ADMIN`

@@ -2,7 +2,7 @@
 
 **Statut :** proposé
 **Date :** 25/11/2026
-**Décidé par :** <à compléter>
+**Décidé par :** TiBenoit, MaxLaMenace, Ivan
 
 ---
 
@@ -71,7 +71,8 @@ d'eau, positions des spots, emprises des zones météo avec plage d'altitude
 
 - coût nul, outils gratuits (`REQ-102`) ;
 - démonstration de bout en bout en local, sans mise en ligne (`REQ-111`) ;
-- tests automatisés reproductibles, y compris sur un poste neuf (`ADR-001`) ;
+- tests automatisés reproductibles, y compris sur un poste neuf (`ADR-001`,
+  `ADR-011`) ;
 - une zone peut être retirée du paramétrage alors qu'un spot ou un critère la
   désigne encore, **sans bloquer le démarrage** (`SPEC-METEO-02` AC-5) ;
 - une mise à jour d'un sentier par import conserve son forçage et ses alertes
@@ -113,7 +114,7 @@ faibles : aucune option n'est éliminée pour une raison de performance.
 
 Nous retenons **PostgreSQL avec PostGIS** comme base unique pour les données
 relationnelles, les géométries avec altitudes et les séries temporelles par
-zone, lancé localement par le moyen retenu dans `ADR-001`.
+zone, lancé localement comme service du Docker Compose d'`ADR-001`.
 
 ## Raisons
 
@@ -128,8 +129,9 @@ zone, lancé localement par le moyen retenu dans `ADR-001`.
   l'emprise et une comparaison avec la plage d'altitude ; la coupure d'un tracé
   à une limite d'altitude située entre deux de ses points est fournie par
   PostGIS au lieu d'être une interpolation maison.
-- **La base garantit ce qui est stable.** Unicité des alias (`SPEC-REF-04`
-  AC-10), unicité `(zone, créneau)` qui garantit qu'un créneau ne garde que la
+- **La base garantit ce qui est stable.** Unicité des alias, en filet de
+  sécurité derrière le contrôle de l'import (`SPEC-REF-04` AC-10, voir
+  « Import des référentiels »), unicité `(zone, créneau)` qui garantit qu'un créneau ne garde que la
   donnée la plus récente (`SPEC-METEO-05` AC-5), effacement des données
   personnelles d'un compte en cascade (`SPEC-AUTH-10`). Ce qui peut légitimement
   devenir invalide (références aux zones météo) n'est volontairement pas confié
@@ -149,11 +151,21 @@ zone, lancé localement par le moyen retenu dans `ADR-001`.
 **Lancement et outillage**
 
 - Un service PostgreSQL doit tourner pour lancer l'application et les tests
-  d'intégration : le lancement local défini par `ADR-001` doit l'inclure
-  (conteneur fourni avec la bonne version de PostGIS).
-- Un outil de migration de schéma versionné est nécessaire ; son choix suit le
-  framework d'`ADR-001`.
-- Si `ADR-004` retient des sessions serveur, elles sont stockées dans cette base.
+  d'intégration : c'est un service du Docker Compose d'`ADR-001`, dont l'image
+  fixe les versions de PostgreSQL et de PostGIS. Les tests d'intégration
+  utilisent la même image (`ADR-011`).
+- Express 5 (`ADR-001`) ne fournit ni outil de migration ni couche d'accès aux
+  données. Restent à choisir : un outil de migration de schéma versionné, et la
+  façon d'écrire les requêtes (SQL direct avec le pilote `pg`, constructeur de
+  requêtes ou ORM). Critère éliminatoire : la prise en charge des types
+  géométriques de PostGIS. Certains ORM ne les connaissent pas et obligent à
+  écrire chaque requête spatiale en SQL brut, ce qui leur enlève leur intérêt
+  ici.
+- Le pilote `pg` renvoie les géométries en binaire (WKB) : les requêtes les
+  convertissent en GeoJSON (`ST_AsGeoJSON`) avant de les passer aux moteurs de
+  calcul d'`ADR-008`.
+- Les sessions retenues par `ADR-004` sont stockées dans cette base
+  (`connect-pg-simple`).
 
 **Ce que la base garantit, et ce qu'elle ne garantit pas**
 
@@ -167,7 +179,10 @@ zone, lancé localement par le moyen retenu dans `ADR-001`.
   alimenté ni utilisé (`SPEC-METEO-05` cas 5) et disparaît avec la purge.
 - **La cascade à la suppression d'un compte ne vise que ses données
   personnelles** (profil, attestation, consentement et son historique,
-  classement, sessions). Les forçages créés par un administrateur ne sont pas
+  classement, rôles). Les sessions n'en font pas partie : la table de
+  `connect-pg-simple` n'est pas reliée au compte par une clé étrangère.
+  `ADR-004` les supprime par une requête dans la même transaction, et refuse de
+  toute façon une session dont le compte n'existe plus. Les forçages créés par un administrateur ne sont pas
   effacés avec son compte. Ce que devient la mention de l'auteur quand ce compte
   est supprimé n'est pas défini : `R-08` exige l'auteur, `SPEC-AUTH-10` efface
   les données du compte, et la conservation au-delà relève de `ZO-26`. Point à
@@ -178,6 +193,13 @@ zone, lancé localement par le moyen retenu dans `ADR-001`.
 - Un import **met à jour** l'élément existant, repéré par l'identifiant de sa
   source ; il ne le supprime jamais pour le recréer. Sinon, la cascade effacerait
   le forçage et les alertes que `SPEC-REF-04` AC-5 impose de conserver.
+- **Doublons d'alias** : la spec refuse **les deux** alias quand deux éléments
+  portent le même (`SPEC-REF-04` cas 12). Une contrainte d'unicité seule ferait
+  autre chose : elle garderait le premier et refuserait le second. L'import
+  repère donc les doublons sur tout le fichier avant d'écrire ; la contrainte
+  en base ne sert que de filet. Cas non traité par la spec : un nouveau fichier
+  attribue à un autre élément un alias déjà en base (faut-il aussi retirer
+  l'alias existant ?). Point à remonter dans `SPEC-REF-04`.
 - Un élément retiré par un import explicite de retrait (`SPEC-REF-04` cas 13)
   est **marqué comme retiré**, avec sa date, et n'est plus proposé ni
   recommandé ; il n'est pas supprimé physiquement. Le sort de ses alertes,
@@ -232,11 +254,9 @@ zone, lancé localement par le moyen retenu dans `ADR-001`.
 
 ## Ce qui nous ferait revenir dessus
 
-- Le lancement local de PostgreSQL ne fonctionne pas de façon fiable sur le poste
-  de démonstration du client, ou `ADR-001` écarte la conteneurisation →
-  réévaluer l'option B (SQLite + SpatiaLite).
-- Le stack retenu par `ADR-001` n'a pas de pilote PostGIS correct (types
-  géométriques mal gérés) → réévaluer l'option C.
+- Docker ne fonctionne pas sur le poste de démonstration (repli d'`ADR-001` sur
+  deux processus locaux) et PostgreSQL avec PostGIS ne s'y installe pas de façon
+  fiable → réévaluer l'option B (SQLite + SpatiaLite).
 - Le découpage météo réel ou la durée de conservation des pluies font dépasser
   quelques millions de lignes d'historique → réévaluer une solution dédiée aux
   séries temporelles.
