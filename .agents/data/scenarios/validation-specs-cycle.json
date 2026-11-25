@@ -145,7 +145,7 @@
       "sourcePortIndex": 0,
       "targetNodeId": "n-if",
       "targetPortIndex": 0,
-      "key": "c6"
+      "key": "0"
     },
     {
       "sourceNodeId": "n-if",
