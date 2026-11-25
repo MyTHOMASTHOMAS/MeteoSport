@@ -7,6 +7,7 @@
 ## SPEC-METEO-01 — Catalogue des sources de données
 
 **Exigence :** REQ-102, REQ-113 (avec contraintes 2 et 3 du CDC §7)
+**Renvois :** hébergement à coût nul REQ-102 → `SPEC-ARCH-nn` ; critères de pêche REQ-024 → `SPEC-PECHE-nn` ; vigilances officielles R-19 → `SPEC-CALC-nn` ; état des sentiers CR-001/Q36 → `SPEC-REF-06`, `SPEC-ADMIN-nn` ; données marines CR-001/Q09 → `SPEC-REF-06`, `SPEC-PECHE-nn`
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -22,6 +23,7 @@
 - Couvre la liste des types de données externes nécessaires et la source retenue pour chacun : prévisions météo (pluie, vent, température, ensoleillement), vigilances officielles (R-19), état des sentiers (CR-001/Q36), données marines (houle, marée, vent côtier ; CR-001/Q09), données astronomiques du solunaire (phases et position de la lune, lever et coucher du soleil ; REQ-024).
 - Le solunaire figure au catalogue même s'il est calculé par l'application à partir de règles astronomiques publiques : la fiche documente alors la méthode et sa référence au lieu d'un producteur. Le calcul du critère solunaire pour un spot relève de `SPEC-PECHE-nn`.
 - Couvre la fiche documentaire de chaque source et l'estimation du nombre d'appels comparé aux quotas.
+- Chaque source retenue couvre le territoire de La Réunion (contrainte 4 du CDC §7, CR-001/Q05).
 - Couvre le cas d'un type de donnée sans source gratuite.
 - Ne couvre pas le choix technique des services ni leur mode d'accès → hors spécification.
 - Ne couvre pas l'usage des données dans les calculs → `SPEC-CALC-nn`, `SPEC-PECHE-nn`.
@@ -72,7 +74,7 @@ Scénario : Type de donnée sans source gratuite
 - [ ] AC-3 — L'estimation des appels quotidiens reste sous le quota de chaque source pour le découpage paramétré (`CASE-METEO-03`).
 - [ ] AC-4 — Un type de donnée sans source gratuite est marqué comme tel (`CASE-METEO-04`).
 - [ ] AC-5 — Une donnée n'est pas redemandée avant sa prochaine mise à jour prévue par la source (`CASE-METEO-05`).
-- [ ] AC-6 — Les 6 critères de REQ-024 (vent, houle, marée, solunaire, pluie, clarté estimée) ont chacun une source, une méthode de calcul documentée ou la mention « sans source » (`CASE-METEO-25`).
+- [ ] AC-6 — Les critères vent, houle, marée, solunaire et pluie de REQ-024 ont chacun une source, une méthode de calcul documentée (solunaire calculé en interne) ou la mention « sans source ». La clarté estimée de l'eau, calculée à partir des pluies récentes (R-10), n'a pas de source externe à cataloguer : sa méthode relève de `SPEC-PECHE-nn` (`CASE-METEO-06`).
 
 ### Revue IA
 
@@ -84,7 +86,8 @@ Scénario : Type de donnée sans source gratuite
 
 ## SPEC-METEO-02 — Découpage géographique météo
 
-**Exigence :** REQ-108, REQ-115 (avec règle R-03)
+**Exigence :** REQ-108 (avec règle R-03)
+**Renvois :** rattachement indirect des sentiers et spots aux zones REQ-032 (partiel : « les données externes (météo…) sont rattachées aux éléments de ces référentiels »), par la zone de R-03 ← `SPEC-REF-06` ; sentiers et spots eux-mêmes REQ-032 → `SPEC-REF-01`, `SPEC-REF-02` ; critères de sécurité propres à chaque sentier R-06, consignés pour le panel pilote REQ-023 → `SPEC-REF-05` ; mécanisme technique de paramétrage → `SPEC-ARCH-nn`
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -122,23 +125,27 @@ Scénario : Modification du découpage au déploiement
 
 | # | Situation | Comportement attendu |
 |---|---|---|
-| 1 | Point exactement sur une limite d'altitude | Rattaché à la zone du secteur d'altitude supérieur (limite incluse dans ce secteur) |
+| 1 | Point exactement sur une limite d'altitude | Rattaché à la zone du secteur d'altitude supérieur (limite incluse dans ce secteur) — hypothèse de modélisation retenue par l'équipe |
 | 2 | Point qui n'appartient à aucune zone | Météo indisponible pour ce point ; aucune zone voisine n'est utilisée à sa place. Le message suit la nomenclature de `SPEC-METEO-06` (ligne « hors découpage ») : il nomme le sentier et la portion concernée, sans terme générique |
-| 3 | Deux zones se chevauchent | Paramétrage refusé au démarrage, avec le motif |
-| 4 | Zone supprimée du paramétrage alors qu'un spot ou un critère la désigne | Paramétrage refusé au démarrage, avec la liste des éléments concernés |
+| 3 | Deux zones se chevauchent : un même point (position et altitude) appartient à deux zones | Paramétrage refusé au démarrage, avec le motif. Une commune découpée en secteurs d'altitude n'est pas un chevauchement tant que les plages d'altitude ne se recouvrent pas ; une commune entière et un secteur de cette même commune qui se recouvrent sont refusés |
+| 4 | Zone supprimée ou renommée dans le paramétrage alors qu'un spot ou un critère de sécurité la désigne | Paramétrage accepté au démarrage ; chaque référence devenue invalide est signalée à l'équipe, avec la liste des éléments concernés. Les conséquences relèvent des référentiels : clarté de l'eau indisponible pour le spot (`SPEC-REF-02`, cas limite 6), sentier pilote désactivé par prudence pour un critère (`SPEC-REF-05`, cas limite 6) |
 | 5 | Tronçon qui traverse plusieurs zones | Découpé en autant de tronçons que de zones traversées |
 
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Découpage initial (zones et limites) pour le panel pilote et la côte : à proposer par l'équipe selon les sources et leurs quotas (`SPEC-METEO-01`).
+- *25/11/2026* — Point exactement sur une limite d'altitude : le CDC (R-03, REQ-108) ne dit rien ; hypothèse de modélisation retenue par l'équipe = secteur supérieur, limite incluse.
+- *25/11/2026* — Définition du chevauchement (cas limite 3) : recouvrement d'un même point (position et altitude) par deux zones, de types identiques ou différents (R-03, REQ-108) ; déduction de AC-1, le CDC ne la formule pas.
+- *25/11/2026* — Zone désignée par un spot ou un critère puis retirée du découpage (cas limite 4) : le CDC ne dit rien. Décision de l'équipe du 25/11/2026 = le paramétrage n'est pas bloqué ; la référence invalide rend la donnée non évaluable dans le référentiel concerné (`SPEC-REF-02`, `SPEC-REF-05`). Un contrôle bloquant au paramétrage a été écarté. Mode de signalement à l'équipe : non défini.
 - *24/11/2026* — Choix du type de zone selon la partie de l'île (commune, secteur d'altitude ou station) : décidé par zone dans le paramétrage ; règle de choix à documenter.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Chaque point d'un tracé est rattaché à au plus une zone, selon sa position et son altitude (`CASE-METEO-06`).
-- [ ] AC-2 — Modifier le découpage dans le paramétrage change le rattachement sans modifier l'application (`CASE-METEO-07`).
-- [ ] AC-3 — Un paramétrage incohérent (chevauchement, zone désignée mais absente) est refusé au démarrage (`CASE-METEO-08`).
-- [ ] AC-4 — Un point sans zone n'emprunte jamais la météo d'une zone voisine (`CASE-METEO-09`).
+- [ ] AC-1 — Chaque point d'un tracé est rattaché à au plus une zone, selon sa position et son altitude (`CASE-METEO-07`).
+- [ ] AC-2 — Modifier le découpage dans le paramétrage change le rattachement sans modifier l'application (`CASE-METEO-08`).
+- [ ] AC-3 — Un paramétrage dont deux zones se chevauchent est refusé au démarrage (`CASE-METEO-09`).
+- [ ] AC-4 — Un point sans zone n'emprunte jamais la météo d'une zone voisine (`CASE-METEO-10`).
+- [ ] AC-5 — Une zone retirée du découpage alors qu'un spot ou un critère la désigne ne bloque pas le démarrage ; la référence invalide est signalée à l'équipe (`CASE-METEO-33`, numéroté en fin de chaîne pour ne pas décaler les cas existants).
 
 ### Revue IA
 
@@ -151,6 +158,7 @@ Scénario : Modification du découpage au déploiement
 ## SPEC-METEO-03 — Prévisions sur 3 jours
 
 **Exigence :** REQ-031 (avec règle R-18)
+**Renvois :** recherche et recommandation bornées au jour même R-18 → `SPEC-TRAIL-nn`, `SPEC-PECHE-nn` ; zones d'un itinéraire REQ-031 → `SPEC-TRAIL-nn` ; spot de pêche REQ-031 → `SPEC-PECHE-nn` ; date de mise à jour des prévisions REQ-104 → `SPEC-METEO-06`
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -162,7 +170,7 @@ Scénario : Modification du découpage au déploiement
 
 ### Portée
 
-- Couvre les données prévues affichées : pluie, vent, température, ensoleillement, et pour un spot les données marines disponibles.
+- Couvre les données prévues affichées : pluie, vent, température, ensoleillement, et pour un spot les données marines disponibles (extension de l'équipe, voir « Ce qui n'est pas défini »).
 - Couvre les deux vues : heure par heure et synthèse par jour.
 - Ne couvre pas la recherche ou la recommandation pour un autre jour → hors périmètre (R-18).
 - Ne couvre pas l'affichage de l'historique météo → hors périmètre (CR-001/Q13).
@@ -188,7 +196,7 @@ Scénario : Prévisions d'un itinéraire
 | # | Situation | Comportement attendu |
 |---|---|---|
 | 1 | La source ne couvre pas tout le surlendemain | Les heures non couvertes sont affichées comme indisponibles, sans extrapolation |
-| 2 | Consultation tard le soir | Les heures passées du jour même ne sont plus affichées comme prévisions |
+| 2 | Consultation tard le soir | Les heures passées du jour même ne sont plus affichées comme prévisions — hypothèse, voir « Ce qui n'est pas défini » |
 | 3 | Donnée marine sans source gratuite | Affichée comme non disponible, avec le motif (`SPEC-METEO-01`) |
 | 4 | Changement de jour pendant la consultation | Au rechargement, « aujourd'hui » désigne le nouveau jour |
 
@@ -196,12 +204,16 @@ Scénario : Prévisions d'un itinéraire
 
 - *24/11/2026* — Contenu exact de la synthèse par jour (minimum, maximum, cumul de pluie…) : à proposer par l'équipe.
 - *24/11/2026* — Fuseau horaire : hypothèse retenue = heure de La Réunion pour tous les affichages et calculs.
+- *25/11/2026* — Données marines dans les prévisions d'un spot : REQ-031 ne parle que de « prévisions météo ». Leur affichage sur 3 jours est une extension de l'équipe, justifiée par leur usage dans la recommandation (REQ-024) ; il dépend de leur disponibilité gratuite (`SPEC-METEO-01`). À valider à la recette.
+- *25/11/2026* — Heures passées du jour même (cas limite 2) : REQ-031 et R-18 ne prescrivent pas de retirer les créneaux écoulés de la vue des prévisions. Hypothèse de l'équipe = ils ne sont plus affichés comme prévisions. À valider à la recette.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Les prévisions couvrent le jour même, le lendemain et le surlendemain, heure par heure et par jour (`CASE-METEO-10`).
-- [ ] AC-2 — Les prévisions sont disponibles pour chaque zone d'un itinéraire et pour un spot (`CASE-METEO-11`).
-- [ ] AC-3 — Une heure non couverte par la source est indiquée comme indisponible (`CASE-METEO-12`).
+- [ ] AC-1 — Les prévisions couvrent le jour même, le lendemain et le surlendemain, heure par heure et par jour (`CASE-METEO-11`).
+- [ ] AC-2 — Les prévisions sont disponibles pour chaque zone d'un itinéraire et pour un spot (`CASE-METEO-12`).
+- [ ] AC-3 — Une heure non couverte par la source est indiquée comme indisponible (`CASE-METEO-13`).
+- [ ] AC-4 — Les heures passées du jour même ne sont plus affichées comme prévisions dans la vue horaire ; les créneaux écoulés d'un tronçon d'itinéraire relèvent de `SPEC-METEO-04` (AC-4) (`CASE-METEO-14`).
+- [ ] AC-5 — Après un changement de jour, « aujourd'hui » désigne le nouveau jour au rechargement (`CASE-METEO-15`).
 
 ### Revue IA
 
@@ -213,7 +225,8 @@ Scénario : Prévisions d'un itinéraire
 
 ## SPEC-METEO-04 — Météo à l'heure de passage
 
-**Exigence :** REQ-007, REQ-002 (avec règles R-03, R-18)
+**Exigence :** REQ-007 (avec règle R-03)
+**Renvois :** saisie et affichage séparé en aller-retour REQ-002 → `SPEC-TRAIL-nn` ; calcul de l'heure de passage REQ-005 → `SPEC-CALC-nn` ; verdict exploitant la météo REQ-029 → `SPEC-CALC-nn` ; recherche bornée au jour même R-18 (cas limite 2) → `SPEC-TRAIL-nn` ; non-adaptation pendant la sortie R-04 → `SPEC-TRAIL-nn`
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -249,21 +262,27 @@ Scénario : Aller-retour
 
 | # | Situation | Comportement attendu |
 |---|---|---|
-| 1 | Heure de passage entre deux créneaux horaires | Prévision du créneau qui contient l'heure de passage (créneau commencé) |
-| 2 | Heure de passage après minuit (sortie qui finit tard) | Prévision du lendemain utilisée pour ce tronçon ; la recherche reste celle du jour même (R-18) |
+| 1 | Heure de passage entre deux créneaux horaires | Prévision du créneau qui contient l'heure de passage (créneau commencé) — hypothèse de modélisation retenue |
+| 2 | Heure de passage après minuit (sortie qui finit tard) | Prévision du lendemain utilisée pour ce tronçon ; la recherche reste celle du jour même (R-18) ; au-delà de la période couverte (J+2) : cas limite 3 |
 | 3 | Heure de passage hors de la période couverte par la source | Météo indisponible pour ce tronçon, signalée (`SPEC-METEO-06`) |
-| 4 | Heure de départ déjà passée | Calcul fait sur l'heure saisie ; les créneaux passés utilisent les dernières prévisions reçues, avec leur date |
+| 4 | Heure de départ déjà passée | Calcul fait sur l'heure saisie ; les créneaux passés utilisent les dernières prévisions reçues, avec leur date : valeur de la dernière prévision reçue (jamais une observation), rattachée à un tronçon d'itinéraire et non à une vue horaire (décision de l'équipe du 25/11/2026). Ce n'est pas un historique météo affiché (REQ-029) |
 | 5 | Tronçon sans zone | Météo indisponible pour ce tronçon (`SPEC-METEO-02`) ; message selon la nomenclature de `SPEC-METEO-06` (ligne « hors découpage ») |
+| 6 | Traversée d'une même zone sur plusieurs créneaux horaires (par exemple de 9 h 20 à 12 h 10 dans « Cirque de Mafate ») | Coupée en tronçons par créneau : prévisions de 9 h, 10 h, 11 h et 12 h de la zone, chacune sur la portion parcourue pendant ce créneau (R-03, REQ-007) — hypothèse de découpage, voir « Ce qui n'est pas défini » |
 
 ### Ce qui n'est pas défini
 
-- *24/11/2026* — Pas de découpage des tronçons pour la météo (un par zone traversée, ou plus fin) : hypothèse retenue = un tronçon par zone traversée, avec l'heure de passage à son entrée dans la zone. À confirmer avec `SPEC-CALC-nn`.
+- *25/11/2026* — Créneau retenu entre deux créneaux horaires (créneau commencé) : hypothèse de modélisation, non définie par R-03 / REQ-007.
+- *25/11/2026* — Départ déjà passé (cas limite 4) : le CDC ne dit rien. Décision de l'équipe du 25/11/2026 = dernière prévision reçue conservée pour les créneaux écoulés, rattachée au tronçon, jamais une observation ; elle n'est pas présentée dans la vue horaire de `SPEC-METEO-03` (cas limite 2), ce qui préserve l'interdiction d'afficher un historique (CDC §6, REQ-029). Usage dans les calculs : `SPEC-CALC-nn`.
+- *25/11/2026* — Itinéraires en boucle ou passages multiples hors aller-retour : non prévus par le CDC (REQ-002) ; R-03 s'applique par tronçon et par heure de passage.
+- *25/11/2026* — Pas de découpage des tronçons pour la météo : R-03 et REQ-007 demandent la prévision « heure par heure » à l'heure estimée de passage. Hypothèse retenue = un tronçon est coupé à chaque changement de zone et à chaque changement de créneau horaire ; chaque tronçon porte la prévision de sa zone pour le créneau où il est parcouru (cas limite 6). Une traversée de 3 heures dans une même zone donne donc au moins 3 tronçons et 3 prévisions. Position des coupures selon l'allure : `SPEC-CALC-nn`.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Chaque tronçon affiche la prévision de sa zone au créneau de son heure de passage (`CASE-METEO-13`).
-- [ ] AC-2 — En aller-retour, chaque passage a sa propre prévision (`CASE-METEO-14`).
-- [ ] AC-3 — Un passage hors période couverte est signalé comme indisponible (`CASE-METEO-15`).
+- [ ] AC-1 — Chaque tronçon affiche la prévision de sa zone au créneau de son heure de passage (`CASE-METEO-16`).
+- [ ] AC-2 — En aller-retour, chaque passage a sa propre prévision (`CASE-METEO-17`).
+- [ ] AC-3 — Un passage hors période couverte est signalé comme indisponible (`CASE-METEO-18`).
+- [ ] AC-4 — Pour un départ déjà passé, les tronçons des créneaux écoulés portent la dernière prévision reçue avec sa date, jamais une observation, et cette prévision n'apparaît pas dans la vue horaire (décision de l'équipe du 25/11/2026) (`CASE-METEO-32`, numéroté en fin de chaîne pour ne pas décaler les cas existants).
+- [ ] AC-5 — Une traversée d'une même zone sur plusieurs créneaux horaires affiche une prévision par créneau parcouru (`CASE-METEO-34`).
 
 ### Revue IA
 
@@ -275,7 +294,8 @@ Scénario : Aller-retour
 
 ## SPEC-METEO-05 — Historique interne des pluies récentes
 
-**Exigence :** R-10 (arbitrage CR-001/§5.1 : historique constitué en interne) ; fournit les cumuls utilisés par REQ-024, REQ-029 et R-06
+**Exigence :** R-10 (arbitrage CR-001/§5.1 : historique constitué en interne)
+**Renvois :** cumul consommé par l'estimation de la clarté de l'eau REQ-024 → `SPEC-PECHE-nn` ; mention de pluie récente dans le verdict REQ-029 → `SPEC-CALC-nn` ; critères de sécurité du panel pilote R-06 → `SPEC-REF-05`, `SPEC-CALC-nn` ; non-affichage de l'historique météo (CDC §6, CR-001/Q13)
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -325,14 +345,16 @@ Scénario : Constitution de l'historique
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Nature des pluies conservées (pluie observée si une source gratuite la fournit, sinon dernière prévision reçue pour l'heure écoulée) : à décider avec le catalogue des sources (`SPEC-METEO-01`).
-- *24/11/2026* — Période des « pluies récentes » et durée de conservation de l'historique : à fixer avec les critères du panel pilote (`ZO-07`, à valider à la recette selon CR-001/§6) et l'estimation de la clarté (R-10) ; paramétrables.
+- *24/11/2026* — Période des « pluies récentes » et durée de conservation de l'historique : à fixer avec les critères du panel pilote (REQ-023, validation à la recette) et l'estimation de la clarté (R-10). La durée de conservation est un paramètre technique interne, hors liste fermée de REQ-115.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Les pluies reçues sont conservées par zone et par heure (`CASE-METEO-16`).
-- [ ] AC-2 — Le cumul sur une période complète est exact (`CASE-METEO-17`).
-- [ ] AC-3 — Un trou dans la période rend le cumul indisponible, sans estimation (`CASE-METEO-18`).
-- [ ] AC-4 — L'historique n'est affiché sur aucun écran (`CASE-METEO-19`).
+- [ ] AC-1 — Les pluies reçues sont conservées par zone et par heure (`CASE-METEO-19`).
+- [ ] AC-2 — Le cumul sur une période complète est exact (`CASE-METEO-20`).
+- [ ] AC-3 — Un trou dans la période rend le cumul indisponible, sans estimation (`CASE-METEO-21`).
+- [ ] AC-4 — L'historique n'est affiché sur aucun écran (`CASE-METEO-22`).
+- [ ] AC-5 — Avant que l'historique couvre la période demandée (mise en service), le cumul est indisponible ; un créneau reçu plusieurs fois ne conserve que la donnée la plus récente (`CASE-METEO-23`).
+- [ ] AC-6 — Les données plus anciennes que la durée de conservation sont supprimées de l'historique (`CASE-METEO-24`).
 
 ### Revue IA
 
@@ -344,7 +366,8 @@ Scénario : Constitution de l'historique
 
 ## SPEC-METEO-06 — Fraîcheur et indisponibilité des données
 
-**Exigence :** REQ-103, REQ-104, REQ-115 (avec règle R-07)
+**Exigence :** REQ-103, REQ-104 (avec règle R-07 ; vigilances officielles de R-19 par extension de l'équipe, REQ-104 ne les citant pas)
+**Renvois :** paramétrage de l'âge maximal REQ-115 → `SPEC-ARCH-nn` ; écran général d'absence de connexion REQ-109 → `SPEC-ARCH-nn` ; vigilance officielle majeure R-19 → `SPEC-CALC-nn` ; exploitation de l'indisponibilité dans les calculs et le comparateur → `SPEC-CALC-nn`, `SPEC-PECHE-nn`, `SPEC-COMP-nn`
 **Statut :** proposé
 **Version :** v1 (24/11/2026)
 
@@ -359,16 +382,18 @@ Le **secteur** de R-07 désigne l'élément auquel la donnée manquante est ratt
 
 | Type de donnée | Secteur indiqué à l'utilisateur |
 |---|---|
-| Prévisions météo, pluies récentes, vigilances | La zone météo, par son nom, et les tronçons ou le spot qui en dépendent |
+| Prévisions météo, vigilances | La zone météo, par son nom, et les tronçons ou le spot qui en dépendent |
 | Météo d'un point hors découpage (aucune zone, `SPEC-METEO-02`) | Le sentier et la portion concernée (ou le spot), avec la mention « hors des zones météo couvertes » : il n'y a pas de nom de zone à afficher |
 | Données marines | Le spot de pêche |
 | État d'un sentier | Le sentier |
+
+Les pluies récentes forment un cumul interne non affiché (`SPEC-METEO-05`) : leur indisponibilité se répercute sur l'estimation de la clarté (« clarté indisponible », R-10, secteur : le spot) ou sur l'évaluabilité des critères de sécurité (secteur : le sentier), sans message d'historique dédié.
 
 Tout message d'indisponibilité affiché à l'utilisateur reprend cette nomenclature. Les termes génériques comme « ce secteur » ou « cette zone » non nommée sont proscrits.
 
 ### Portée
 
-- Couvre l'horodatage de chaque information externe : météo, vigilances, données marines, état des sentiers.
+- Couvre l'horodatage de chaque information externe : météo, données marines, état des sentiers (REQ-104) et, par extension de l'équipe, vigilances officielles (R-19 ; voir « Ce qui n'est pas défini »).
 - Couvre l'âge maximal paramétrable par type de donnée.
 - Couvre le message d'indisponibilité par secteur, selon le tableau ci-dessus, et l'absence d'extrapolation.
 - Couvre l'indisponibilité d'une source externe alors que l'utilisateur est connecté (R-07, REQ-103).
@@ -388,7 +413,7 @@ Scénario : Donnée périmée
   Étant donné un âge maximal de 6 heures pour les prévisions météo
   Et une dernière prévision reçue il y a 9 heures pour une zone
   Quand la météo de cette zone est demandée
-  Alors un message indique que les prévisions du jour ne sont pas disponibles pour cette zone, nommée
+  Alors un message indique que les prévisions ne sont pas disponibles pour cette zone, nommée
   Et la date de la dernière mise à jour est indiquée
   Et aucune valeur n'est présentée comme prévision courante
 
@@ -403,29 +428,33 @@ Scénario : Source indisponible
 
 | # | Situation | Comportement attendu |
 |---|---|---|
-| 1 | Donnée exactement à l'âge maximal | Encore à jour (limite incluse) |
+| 1 | Donnée exactement à l'âge maximal | Encore à jour (limite incluse) — hypothèse, voir « Ce qui n'est pas défini » |
 | 2 | Une seule zone d'un itinéraire est périmée | Message pour cette zone seulement ; les autres zones restent affichées |
 | 3 | Valeur manquante pour une heure dans une donnée à jour | Indiquée comme manquante pour cette heure, sans interpolation |
 | 4 | Âge maximal modifié dans le paramétrage | Appliqué aux affichages suivants, sans modifier l'application |
 | 5 | Source des vigilances officielles indisponible | Message explicite ; l'absence de vigilance n'est jamais présentée comme confirmée |
-| 6 | Source qui ne fournit pas de date de mise à jour | La date de réception par l'application est affichée, et précisée comme telle |
+| 6 | Source qui ne fournit pas de date de mise à jour | La date de réception par l'application est affichée, et précisée comme telle — hypothèse de repli équipe (REQ-104, REQ-113) |
 | 7 | L'utilisateur n'a pas de connexion internet | Pas de message par secteur : l'écran général d'absence de connexion s'affiche (REQ-109, `SPEC-ARCH-nn`) |
 | 8 | L'utilisateur est connecté mais une source externe ne répond pas | Message par secteur selon la règle ; jamais l'écran d'absence de connexion |
 
 ### Ce qui n'est pas défini
 
 - *24/11/2026* — Âge maximal de chaque type de donnée (paramétrable, REQ-115) : valeurs à proposer par l'équipe selon la fréquence de mise à jour des sources retenues.
+- *25/11/2026* — Date de réception affichée faute de date de mise à jour fournie par la source : hypothèse de repli équipe, sous réserve de la revue des métadonnées des sources (REQ-113).
+- *25/11/2026* — Horodatage et âge maximal appliqués aussi aux vigilances : extension équipe (R-19, R-07) ; REQ-104 cite météo, données marines et état des sentiers.
+- *25/11/2026* — Âge maximal unique par type de donnée, quel que soit l'horizon de prévision (jour, lendemain, surlendemain) : suit R-07 et REQ-115, qui ne distinguent pas par horizon.
 - *24/11/2026* — Libellés exacts des messages d'indisponibilité : à proposer par l'équipe.
+- *25/11/2026* — Donnée exactement à l'âge maximal (cas limite 1) : R-07 parle de « l'âge au-delà duquel une donnée n'est plus à jour » ; la limite incluse dans la validité est une déduction de l'équipe. À valider à la recette.
 
 ### Critères d'acceptation
 
-- [ ] AC-1 — Chaque information externe affichée porte sa date de mise à jour (`CASE-METEO-20`).
-- [ ] AC-2 — Au-delà de l'âge maximal, la donnée n'est plus présentée comme courante et un message s'affiche pour la zone, le spot ou le sentier concerné (`CASE-METEO-21`).
-- [ ] AC-3 — En coupant chaque source, un message explicite s'affiche et aucune valeur n'est inventée (`CASE-METEO-22`).
-- [ ] AC-4 — L'indisponibilité d'une zone ou d'une source n'empêche pas l'affichage des autres (`CASE-METEO-23`).
-- [ ] AC-5 — Modifier l'âge maximal dans le paramétrage change le comportement sans modifier l'application (`CASE-METEO-24`).
-- [ ] AC-6 — Chaque message d'indisponibilité nomme la zone, le spot ou le sentier concerné selon la nomenclature, y compris pour un point hors découpage, sans terme générique (`CASE-METEO-26`).
-- [ ] AC-7 — Une source externe en panne et une absence de connexion de l'utilisateur produisent deux affichages distincts (`CASE-METEO-27`).
+- [ ] AC-1 — Chaque information externe affichée porte sa date de mise à jour (`CASE-METEO-25`).
+- [ ] AC-2 — Au-delà de l'âge maximal, la donnée n'est plus présentée comme courante et un message s'affiche pour la zone, le spot ou le sentier concerné (`CASE-METEO-26`).
+- [ ] AC-3 — En coupant chaque source, un message explicite s'affiche et aucune valeur n'est inventée (`CASE-METEO-27`).
+- [ ] AC-4 — L'indisponibilité d'une zone ou d'une source n'empêche pas l'affichage des autres (`CASE-METEO-28`).
+- [ ] AC-5 — Modifier l'âge maximal dans le paramétrage change le comportement sans modifier l'application (`CASE-METEO-29`).
+- [ ] AC-6 — Chaque message d'indisponibilité nomme la zone, le spot ou le sentier concerné selon la nomenclature, y compris pour un point hors découpage, sans terme générique (`CASE-METEO-30`).
+- [ ] AC-7 — Une source externe en panne et une absence de connexion de l'utilisateur produisent deux affichages distincts (`CASE-METEO-31`).
 
 ### Revue IA
 
