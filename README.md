@@ -11,7 +11,7 @@ Application de prévisions météorologiques adaptées à la pratique sportive.
 - **Ivan**
 
 **Période de réalisation :** Du 23 novembre 2026 au 09 décembre 2026  
-**Dernière mise à jour :** 23/11/2026
+**Dernière mise à jour :** 25/11/2026
 
 ---
 
@@ -23,7 +23,7 @@ Ce tableau Kanban permet de piloter et suivre l'avancement des tâches de l'équ
 
 | 📥 Backlog / À faire | 🚧 En cours (WIP) | 🔍 En revue / Test | ✅ Terminé (Done) |
 | :--- | :--- | :--- | :--- |
-| **Écriture des specs**<br>📅 *24/11/2026*<br>🏷️ `Spécifications`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Écriture du sommaire ADR et SPEC ARCH**<br>📅 *24/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit**<br><hr>**Écriture des ADR**<br>📅 *25/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Écriture des signatures**<br>📅 *25/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit / MaxLaMenace / Ivan** | **Édition & validation du CR-01**<br>📅 *23/11/2026*<br>🏷️ `Documentation`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Édition & validation du CDC V1**<br>📅 *23/11/2026*<br>🏷️ `Documentation`<br>👤 **TiBenoit / MaxLaMenace / Ivan** | *(Vide pour le moment)* | **Découverte du projet**<br>📅 *23/11/2026*<br>🏷️ `Onboarding`<br>👤 **TiBenoit**<br><hr>**Découverte du projet**<br>📅 *23/11/2026*<br>🏷️ `Onboarding`<br>👤 **MaxLaMenace**<br><hr>**Découverte du projet**<br>📅 *23/11/2026*<br>🏷️ `Onboarding`<br>👤 **Ivan** |
+| **Écriture du sommaire ADR et SPEC ARCH**<br>📅 *24/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit**<br><hr>**Écriture des signatures**<br>📅 *25/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Validation des ADR et signatures**<br>📅 *26/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit / MaxLaMenace / Ivan** | **Écriture des specs**<br>📅 *24/11/2026*<br>🏷️ `Spécifications`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Écriture des ADR**<br>📅 *25/11/2026*<br>🏷️ `Architecture`<br>👤 **TiBenoit / MaxLaMenace / Ivan** | *(Vide pour le moment)* | **Découverte du projet**<br>📅 *23/11/2026*<br>🏷️ `Onboarding`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Édition & validation du CR-01**<br>📅 *23–24/11/2026*<br>🏷️ `Documentation`<br>👤 **TiBenoit / MaxLaMenace / Ivan**<br><hr>**Édition & validation du CDC V1**<br>📅 *24/11/2026*<br>🏷️ `Documentation`<br>👤 **TiBenoit / MaxLaMenace / Ivan** |
 
 ---
 
@@ -34,22 +34,25 @@ Ce tableau Kanban permet de piloter et suivre l'avancement des tâches de l'équ
 | `TSK-01` | **Découverte du projet** | **TiBenoit** | 23/11/2026 | ✅ **Terminé** | 🔴 Haute | Prise en main du repo, du kit TDD et de l'environnement |
 | `TSK-02` | **Découverte du projet** | **MaxLaMenace** | 23/11/2026 | ✅ **Terminé** | 🔴 Haute | Prise en main du repo, du kit TDD et de l'environnement |
 | `TSK-03` | **Découverte du projet** | **Ivan** | 23/11/2026 | ✅ **Terminé** | 🔴 Haute | Prise en main du repo, du kit TDD et de l'environnement |
-| `TSK-04` | **Édition & validation du CR-01** | **TiBenoit** | 23/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction et validation de `tdd/docs/cr/compte-rendu-entretien-01.md` |
-| `TSK-05` | **Édition & validation du CR-01** | **MaxLaMenace** | 23/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction et validation de `tdd/docs/cr/compte-rendu-entretien-01.md` |
-| `TSK-06` | **Édition & validation du CR-01** | **Ivan** | 23/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction et validation de `tdd/docs/cr/compte-rendu-entretien-01.md` |
-| `TSK-07` | **Édition & validation du CDC V1** | **TiBenoit** | 23/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction et validation de `tdd/docs/cdc/cahier-des-charges-v1.md` |
-| `TSK-08` | **Édition & validation du CDC V1** | **MaxLaMenace** | 23/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction et validation de `tdd/docs/cdc/cahier-des-charges-v1.md` |
-| `TSK-09` | **Édition & validation du CDC V1** | **Ivan** | 23/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction et validation de `tdd/docs/cdc/cahier-des-charges-v1.md` |
-| `TSK-10` | **Écriture des specs** | **TiBenoit** | 24/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des spécifications métier / techniques dans `tdd/specs/` |
-| `TSK-11` | **Écriture des specs** | **MaxLaMenace** | 24/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des spécifications métier / techniques dans `tdd/specs/` |
-| `TSK-12` | **Écriture des specs** | **Ivan** | 24/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des spécifications métier / techniques dans `tdd/specs/` |
+| `TSK-04` | **Édition & validation du CR-01** | **TiBenoit** | 23–24/11/2026 | ✅ **Terminé** | 🔴 Haute | Rédaction et validation de `tdd/docs/cr/cr-001.md` |
+| `TSK-05` | **Édition & validation du CR-01** | **MaxLaMenace** | 23–24/11/2026 | ✅ **Terminé** | 🔴 Haute | Rédaction et validation de `tdd/docs/cr/cr-001.md` |
+| `TSK-06` | **Édition & validation du CR-01** | **Ivan** | 23–24/11/2026 | ✅ **Terminé** | 🔴 Haute | Rédaction et validation de `tdd/docs/cr/cr-001.md` |
+| `TSK-07` | **Édition & validation du CDC V1** | **TiBenoit** | 24/11/2026 | ✅ **Terminé** | 🔴 Haute | Validation client de `tdd/docs/cdc/cahier-des-charges-v1.md` (v1.3) |
+| `TSK-08` | **Édition & validation du CDC V1** | **MaxLaMenace** | 24/11/2026 | ✅ **Terminé** | 🔴 Haute | Validation client de `tdd/docs/cdc/cahier-des-charges-v1.md` (v1.3) |
+| `TSK-09` | **Édition & validation du CDC V1** | **Ivan** | 24/11/2026 | ✅ **Terminé** | 🔴 Haute | Validation client de `tdd/docs/cdc/cahier-des-charges-v1.md` (v1.3) |
+| `TSK-10` | **Écriture des specs** | **TiBenoit** | 24/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction des spécifications dans `tdd/specs/` (ex. `peche.md`, `comparateur.md`, `administration.md`) |
+| `TSK-11` | **Écriture des specs** | **MaxLaMenace** | 24/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction des spécifications dans `tdd/specs/` |
+| `TSK-12` | **Écriture des specs** | **Ivan** | 24/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction des spécifications dans `tdd/specs/` |
 | `TSK-13` | **Écriture du sommaire ADR et SPEC ARCH** | **TiBenoit** | 24/11/2026 | ⚪ **À faire** | 🟠 Moyenne | Sommaire des ADR et spécifications d'architecture (`ARCH`) |
-| `TSK-14` | **Écriture des ADR** | **TiBenoit** | 25/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des Architecture Decision Records dans `tdd/docs/adr/` |
-| `TSK-15` | **Écriture des ADR** | **MaxLaMenace** | 25/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des Architecture Decision Records dans `tdd/docs/adr/` |
-| `TSK-16` | **Écriture des ADR** | **Ivan** | 25/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des Architecture Decision Records dans `tdd/docs/adr/` |
+| `TSK-14` | **Écriture des ADR** | **TiBenoit** | 25/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction des Architecture Decision Records dans `tdd/docs/adr/` |
+| `TSK-15` | **Écriture des ADR** | **MaxLaMenace** | 25/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction des Architecture Decision Records dans `tdd/docs/adr/` |
+| `TSK-16` | **Écriture des ADR** | **Ivan** | 25/11/2026 | 🟡 **En cours** | 🔴 Haute | Rédaction des Architecture Decision Records dans `tdd/docs/adr/` |
 | `TSK-17` | **Écriture des signatures** | **TiBenoit** | 25/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des signatures d'architecture dans `tdd/docs/signature/` |
 | `TSK-18` | **Écriture des signatures** | **MaxLaMenace** | 25/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des signatures d'architecture dans `tdd/docs/signature/` |
 | `TSK-19` | **Écriture des signatures** | **Ivan** | 25/11/2026 | ⚪ **À faire** | 🔴 Haute | Rédaction des signatures d'architecture dans `tdd/docs/signature/` |
+| `TSK-20` | **Validation des ADR et signatures** | **TiBenoit** | 26/11/2026 | ⚪ **À faire** | 🔴 Haute | Revue critique et validation collégiale des ADR (`tdd/docs/adr/`) et signatures (`tdd/docs/signature/`) |
+| `TSK-21` | **Validation des ADR et signatures** | **MaxLaMenace** | 26/11/2026 | ⚪ **À faire** | 🔴 Haute | Revue critique et validation collégiale des ADR (`tdd/docs/adr/`) et signatures (`tdd/docs/signature/`) |
+| `TSK-22` | **Validation des ADR et signatures** | **Ivan** | 26/11/2026 | ⚪ **À faire** | 🔴 Haute | Revue critique et validation collégiale des ADR (`tdd/docs/adr/`) et signatures (`tdd/docs/signature/`) |
 
 ---
 
@@ -57,28 +60,31 @@ Ce tableau Kanban permet de piloter et suivre l'avancement des tâches de l'équ
 
 #### 🔹 TiBenoit
 - [x] ✅ **23/11/2026** : Découverte du projet *(Terminé)*
-- [ ] 🟡 **23/11/2026** : Édition & validation du CR-01 *(En cours)*
-- [ ] 🟡 **23/11/2026** : Édition & validation du CDC V1 *(En cours)*
-- [ ] ⚪ **24/11/2026** : Écriture des specs
+- [x] ✅ **23–24/11/2026** : Édition & validation du CR-01 *(Terminé)*
+- [x] ✅ **24/11/2026** : Édition & validation du CDC V1 *(Terminé)*
+- [ ] 🟡 **24/11/2026** : Écriture des specs *(En cours)*
 - [ ] ⚪ **24/11/2026** : Écriture du sommaire ADR et SPEC ARCH
-- [ ] ⚪ **25/11/2026** : Écriture des ADR
+- [ ] 🟡 **25/11/2026** : Écriture des ADR *(En cours)*
 - [ ] ⚪ **25/11/2026** : Écriture des signatures
+- [ ] ⚪ **26/11/2026** : Validation des ADR et signatures
 
 #### 🔹 MaxLaMenace
 - [x] ✅ **23/11/2026** : Découverte du projet *(Terminé)*
-- [ ] 🟡 **23/11/2026** : Édition & validation du CR-01 *(En cours)*
-- [ ] 🟡 **23/11/2026** : Édition & validation du CDC V1 *(En cours)*
-- [ ] ⚪ **24/11/2026** : Écriture des specs
-- [ ] ⚪ **25/11/2026** : Écriture des ADR
+- [x] ✅ **23–24/11/2026** : Édition & validation du CR-01 *(Terminé)*
+- [x] ✅ **24/11/2026** : Édition & validation du CDC V1 *(Terminé)*
+- [ ] 🟡 **24/11/2026** : Écriture des specs *(En cours)*
+- [ ] 🟡 **25/11/2026** : Écriture des ADR *(En cours)*
 - [ ] ⚪ **25/11/2026** : Écriture des signatures
+- [ ] ⚪ **26/11/2026** : Validation des ADR et signatures
 
 #### 🔹 Ivan
 - [x] ✅ **23/11/2026** : Découverte du projet *(Terminé)*
-- [ ] 🟡 **23/11/2026** : Édition & validation du CR-01 *(En cours)*
-- [ ] 🟡 **23/11/2026** : Édition & validation du CDC V1 *(En cours)*
-- [ ] ⚪ **24/11/2026** : Écriture des specs
-- [ ] ⚪ **25/11/2026** : Écriture des ADR
+- [x] ✅ **23–24/11/2026** : Édition & validation du CR-01 *(Terminé)*
+- [x] ✅ **24/11/2026** : Édition & validation du CDC V1 *(Terminé)*
+- [ ] 🟡 **24/11/2026** : Écriture des specs *(En cours)*
+- [ ] 🟡 **25/11/2026** : Écriture des ADR *(En cours)*
 - [ ] ⚪ **25/11/2026** : Écriture des signatures
+- [ ] ⚪ **26/11/2026** : Validation des ADR et signatures
 
 ---
 
@@ -187,9 +193,11 @@ Types : `spec`, `design`, `test`, `feat`, `fix`, `docs`, `chore`.
 
 ## 6. Rythme & Jalons
 
-- **23/11/2026** : Découverte terminée ; édition & validation du CR-01 et du CDC V1 en cours
-- **24/11/2026** : Écriture des specs (+ sommaire ADR / SPEC ARCH pour TiBenoit)
-- **25/11/2026** : Écriture des ADR & des signatures
+- **23/11/2026** : Découverte terminée ; édition du CR-01 et du CDC V1
+- **24/11/2026 (matin)** : CDC V1 validé par le client (v1.3) ; CR-01 clos
+- **24/11/2026 (en cours)** : Écriture des specs (`tdd/specs/`) ; sommaire ADR / SPEC ARCH (TiBenoit)
+- **25/11/2026 (en cours)** : Écriture des ADR & des signatures
+- **26/11/2026** : Revue & validation collégiale des ADR et des signatures d'architecture (TiBenoit / MaxLaMenace / Ivan)
 - **Push quotidien** : Chaque soir pour synchroniser le travail de l'équipe
 - **09/12/2026** : Fin du cycle de développement & livraison finale
 
