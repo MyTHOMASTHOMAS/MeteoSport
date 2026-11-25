@@ -5,7 +5,7 @@ Gabarit : `ADR-000-template.md`.
 
 | ADR | Titre | Statut | Ancrage CDC |
 |---|---|---|---|
-| [ADR-001](./ADR-001-architecture-stack-locale.md) | Architecture applicative, stack technique et exécution locale | proposé | REQ-102, REQ-111 |
+| [ADR-001](./ADR-001-architecture-stack-locale.md) | Architecture applicative, stack technique et déploiement local Docker | proposé | REQ-101, REQ-102, REQ-109, REQ-111 |
 | [ADR-002](./ADR-002-persistance-donnees-spatiales.md) | Persistance des données, géométries et historique interne des pluies | proposé | REQ-015, REQ-021, REQ-022, REQ-032, R-08, R-10, R-11 |
 | [ADR-003](./ADR-003-parametrage-externalise.md) | Externalisation et validation du paramétrage au déploiement | proposé | REQ-108, REQ-115, R-03, R-07, R-12, R-17, R-20 |
 | [ADR-004](./ADR-004-securite-auth-rgpd.md) | Authentification, sessions multi-appareils, sécurité et RGPD | proposé | REQ-015 à REQ-020, REQ-105, REQ-106, REQ-114, R-13, R-14, R-16 |
@@ -15,14 +15,13 @@ Gabarit : `ADR-000-template.md`.
 | [ADR-008](./ADR-008-moteurs-calcul-deterministes.md) | Isolation des moteurs de calcul déterministes et évaluation des règles | proposé | REQ-005, REQ-012 à REQ-014, REQ-024, REQ-028, REQ-029, REQ-107, R-05, R-09, R-12, R-19, R-20 |
 | [ADR-009](./ADR-009-explications-textes-types-ia.md) | Rédaction des explications : textes types et option IA gratuite | proposé | REQ-009, REQ-102, R-05 |
 | [ADR-010](./ADR-010-generation-validation-gpx.md) | Génération, simplification de trace et validation GPX 1.1 | proposé | REQ-011, REQ-110, R-01, R-09 |
-
----
+| [ADR-011](./ADR-011-strategie-tests-tdd.md) | Stratégie de tests automatisés, traçabilité CASE et simulation de pannes | proposé | REQ-103, REQ-105, REQ-106, REQ-107, REQ-110, REQ-114 |
 
 ## Description des ADR
 
-### `ADR-001` — Architecture applicative, stack technique et exécution locale
+### `ADR-001` — Architecture applicative, stack technique et déploiement local Docker
 - **Domaines concernés :** `ARCH` (transverse)
-- **Décisions à trancher :** Style d'architecture (ex. monolithe modulaire découpé selon les 10 domaines du kit TDD pour aligner `src/` et les signatures), choix des langages/frameworks, outillage de tests automatisés (`tests/` avec simulation de coupure des sources externes pour `REQ-103`), et mode de lancement reproductible en local à coût zéro (`localhost`, script ou conteneurisation).
+- **Décisions à trancher :** Séparation en double instance Docker orchestrée via Docker Compose (`localhost`, coût zéro) : instance frontend React 19 (TypeScript) compilée avec Vite et servie par Nginx (proxy `/api`), et instance backend Express 5 (Node.js LTS / TypeScript) structurée en monolithe modulaire par domaine métier.
 
 ### `ADR-002` — Persistance des données, géométries et historique interne des pluies
 - **Domaines concernés :** `REF`, `METEO`, `AUTH`, `ADMIN`
@@ -58,9 +57,11 @@ Gabarit : `ADR-000-template.md`.
 
 ### `ADR-010` — Génération, simplification de trace et validation GPX 1.1
 - **Domaines concernés :** `GPX`
-- **Décisions à trancher :** Sérialisation conforme au schéma public GPX 1.1 (trace continue aller/retour, altitudes du référentiel, points de passage pour les points d'eau avec avertissement `R-09`, mention d'aide indicative, zéro donnée personnelle ni temps estimé) ; algorithme de simplification des traces longues respectant le plafond de points, les tolérances d'écart/distance et la préservation des points clés (`SPEC-GPX-03` AC-4) ; validation XSD systématique à la production et en test automatisé avant remise du fichier.
+- **Décisions à trancher :** Sérialisation conforme au schéma public GPX 1.1 (trace continue aller/retour, altitudes du référentiel, points de passage pour les points d'eau avec avertissement `R-09`, mention d'aide indicative, zéro donnée personnelle ni temps estimé) ; algorithme de simplification des traces longues respectant le plafond de points, les tolérances d'écart/distance et la préservation des points clés (`SPEC-GPX-03` AC-4) ; validation XSD systématique à la production avant remise du fichier.
 
----
+### `ADR-011` — Stratégie de tests automatisés, traçabilité CASE et simulation de pannes
+- **Domaines concernés :** `ARCH` (transverse TDD)
+- **Décisions à trancher :** Choix des frameworks et runners de test (unitaires purs pour `CALC`/`PECHE`/`COMP` sur jeux de référence `REQ-107`, intégration API Express pour `AUTH`/`ADMIN`/`TRAIL`, composants front si nécessaire) ; convention de nommage garantissant la traçabilité `CASE-<DOM>-<nn>` dans `tests/` ; stratégie de mocks/stubs pour simuler la coupure et la péremption de chaque source externe (`REQ-103`) ; validation automatisée des schémas GPX 1.1 (`REQ-110`) et des accès croisés (`REQ-105`, `REQ-106`).
 
 **Non retenus (explicite) :**
 
