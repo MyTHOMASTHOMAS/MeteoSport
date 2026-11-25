@@ -10,7 +10,7 @@ Gabarit : `ADR-000-template.md`.
 | [ADR-003](./ADR-003-parametrage-externalise.md) | Externalisation et validation du paramétrage | proposé | REQ-108, REQ-115, R-03, R-07, R-12, R-17, R-20 |
 | [ADR-004](./ADR-004-securite-auth-rgpd.md) | Authentification, sessions multi-appareils, sécurité et RGPD | proposé | REQ-015 à REQ-020, REQ-105, REQ-106, REQ-114, R-13, R-14, R-16 |
 | [ADR-005](./ADR-005-sources-gratuites-quotas-cache.md) | Sources de données gratuites, quotas et stratégie de cache | proposé | REQ-007, REQ-024, REQ-031, REQ-102, REQ-103, REQ-104, REQ-113, R-07, R-10, R-18 |
-| [ADR-006](./ADR-006-frontend-pwa-cartographie.md) | Interface mobile-first, PWA connectée, cartographie et purge locale | proposé | REQ-101, REQ-109, REQ-015, REQ-019 |
+| [ADR-006](./ADR-006-frontend-pwa-cartographie.md) | Interface mobile-first, PWA connectée, cartographie et purge locale | proposé | REQ-101, REQ-109, REQ-015, REQ-019, REQ-102 |
 | [ADR-007](./ADR-007-graphe-sentiers-import-routage.md) | Import des référentiels, graphe des sentiers et moteur de routage | proposé | REQ-001 à REQ-004, REQ-008, REQ-010, REQ-023, REQ-032, R-01, R-02, R-04, R-06 |
 | [ADR-008](./ADR-008-moteurs-calcul-deterministes.md) | Isolation des moteurs de calcul déterministes et évaluation des règles | proposé | REQ-005, REQ-012 à REQ-014, REQ-024, REQ-028, REQ-029, REQ-107, R-05, R-09, R-12, R-19, R-20 |
 | [ADR-009](./ADR-009-explications-textes-types-ia.md) | Rédaction des explications : textes types et option IA gratuite | proposé | REQ-009, REQ-102, R-05 |
