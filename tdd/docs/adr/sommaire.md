@@ -16,6 +16,7 @@ Gabarit : `ADR-000-template.md`.
 | [ADR-009](./ADR-009-explications-textes-types-ia.md) | Rédaction des explications : textes types et option IA gratuite | proposé | REQ-009, REQ-102, R-05 |
 | [ADR-010](./ADR-010-generation-validation-gpx.md) | Génération, simplification de trace et validation GPX 1.1 | proposé | REQ-011, REQ-110, R-01, R-09 |
 | [ADR-011](./ADR-011-strategie-tests-tdd.md) | Stratégie de tests automatisés, traçabilité CASE et simulation de pannes | proposé | REQ-103, REQ-105, REQ-106, REQ-107, REQ-110, REQ-114 |
+| [ADR-012](./ADR-012-controle-qualite-statique.md) | Contrôle qualité statique du code et barrière de fusion | proposé | Indirect : REQ-102, REQ-107, REQ-114 (aucune exigence de qualité du code dans le CDC) |
 
 ## Description des ADR
 
@@ -62,6 +63,10 @@ Gabarit : `ADR-000-template.md`.
 ### `ADR-011` — Stratégie de tests automatisés, traçabilité CASE et simulation de pannes
 - **Domaines concernés :** `ARCH` (transverse TDD)
 - **Décisions à trancher :** Choix des frameworks et runners de test (unitaires purs pour `CALC`/`PECHE`/`COMP` sur jeux de référence `REQ-107`, intégration API Express pour `AUTH`/`ADMIN`/`TRAIL`, composants front si nécessaire) ; convention de nommage garantissant la traçabilité `CASE-<DOM>-<nn>` dans `tests/` ; stratégie de mocks/stubs pour simuler la coupure et la péremption de chaque source externe (`REQ-103`) ; validation automatisée des schémas GPX 1.1 (`REQ-110`) et des accès croisés (`REQ-105`, `REQ-106`).
+
+### `ADR-012` — Contrôle qualité statique du code et barrière de fusion
+- **Domaines concernés :** `ARCH` (transverse)
+- **Décisions à trancher :** Niveau d'exigence de TypeScript (`strict`, `noUncheckedIndexedAccess`) et vérification des types, que Vite, Vitest et `tsx` ne font pas ; outil d'analyse statique et de formatage ; règles de lint qui font respecter les règles d'architecture des autres ADR (horloge unique `ADR-011`, pureté des moteurs `ADR-008`, passage par le journaliseur `ADR-004`, frontières entre domaines `ADR-001`) ; secrets hors du dépôt (clé Météo-France, `ADR-005`) ; intégration continue sur chaque demande de fusion, qui tranche le point 22 d'`ADR-011`, et partage entre contrôles bloquants, contrôles affichés sans bloquer et revue humaine.
 
 **Non retenus (explicite) :**
 
