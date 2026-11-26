@@ -52,9 +52,10 @@ Les ADR précédents ont renvoyé ici des points précis :
 Contraintes : coût nul, outils libres et gratuits (`REQ-102`) ; trois
 développeurs ; fin de cycle le 09/12/2026.
 
-Quatre questions sont à trancher : les outils de test ; la base utilisée par
-les tests ; la simulation des sources externes et du temps ; le contrôle de la
-correspondance entre CASE et tests.
+Quatre questions sont à trancher : les outils de test (lanceur, client HTTP des
+tests d'API, navigateur) ; la base utilisée par les tests ; la simulation des
+sources externes et du temps ; le contrôle de la correspondance entre CASE et
+tests.
 
 ## Options envisagées
 
@@ -83,6 +84,24 @@ correspondance entre CASE et tests.
 | Ce qu'elle apporte | Aucune dépendance. |
 | Ce qu'elle coûte | Simulation de modules et de minuteurs plus limitée ; rien pour les composants React : il faudrait un second outil côté frontend. |
 | Ce qu'elle rend difficile plus tard | Partager utilitaires et conventions entre les deux instances. |
+
+### Client HTTP des tests d'intégration de l'API
+
+#### Option F — `fetch` natif de Node.js
+
+| | |
+|---|---|
+| Ce qu'elle apporte | Aucune dépendance ; même API que le client HTTP du frontend ; les requêtes passent par une vraie connexion HTTP, comme en production. |
+| Ce qu'elle coûte | L'application doit écouter sur un port local (port `0`, attribué par le système) ; `fetch` ne conserve pas les cookies : un petit client de test, maison, garde le cookie de session (un client par appareil simulé). |
+| Ce qu'elle rend difficile plus tard | Rien de notable. |
+
+#### Option ST — Supertest
+
+| | |
+|---|---|
+| Ce qu'elle apporte | Appelle l'application sans port ; agents qui conservent les cookies ; assertions chaînées sur le statut et les en-têtes. |
+| Ce qu'elle coûte | Une dépendance et une syntaxe de plus à apprendre, alors que les assertions de Vitest suffisent. |
+| Ce qu'elle rend difficile plus tard | Rien de notable. |
 
 ### Tests dans un vrai navigateur
 
@@ -157,9 +176,10 @@ correspondance entre CASE et tests.
 ## Décision
 
 Nous retenons **Vitest** pour les tests unitaires, d'intégration et de
-composants des deux instances, **Supertest** pour tester l'API Express sur une
-**vraie base PostgreSQL / PostGIS** fournie par un service `db-test` du Docker
-Compose, et **Playwright** pour les seuls comportements qui exigent un vrai
+composants des deux instances, y compris l'API Express, appelée par le **`fetch`
+natif** de Node.js sur une **vraie base PostgreSQL / PostGIS** fournie par un
+service `db-test` du Docker Compose, et **Playwright** pour les seuls
+comportements qui exigent un vrai
 navigateur ; les sources externes sont simulées **à deux niveaux** (`msw` pour
 les adaptateurs, sources simulées au-dessus) et le temps est piloté par une
 **horloge injectée** ; chaque CASE a **son fichier de test**, nommé d'après lui,
@@ -173,7 +193,7 @@ et un script vérifie la correspondance CASE ↔ test.
    | Niveau | Outil | Ce qui tourne | Domaines et sujets |
    |---|---|---|---|
    | Unitaire | Vitest | Une fonction ou un module ; ni base, ni réseau, ni horloge réelle | `CALC`, `PECHE`, `COMP` (moteurs et évaluateur de règles, `ADR-008`) ; routage `TRAIL` (`ADR-007`) ; sérialisation et simplification `GPX` ; gabarits d'explication (`ADR-009`) ; calcul de fraîcheur ; validation des paramètres |
-   | Intégration API | Vitest + Supertest | L'application Express complète, en mémoire (sans écoute de port), sur la base `db-test`, avec sources, courriel et IA simulés | `AUTH`, `ADMIN`, imports `REF`, collecte et cache `METEO`, paramètres (`ADR-003`) ; `REQ-103`, `REQ-105`, `REQ-106`, `REQ-114` |
+   | Intégration API | Vitest + `fetch` natif | L'application Express complète, à l'écoute sur un port local aléatoire, sur la base `db-test`, avec sources, courriel et IA simulés | `AUTH`, `ADMIN`, imports `REF`, collecte et cache `METEO`, paramètres (`ADR-003`) ; `REQ-103`, `REQ-105`, `REQ-106`, `REQ-114` |
    | Composant | Vitest + Testing Library + jsdom | Un composant React ou un module du frontend | Seulement là où une règle se joue dans le navigateur : client HTTP unique (`401` → purge, erreur réseau → écran d'indisponibilité, `502`/`504` → service indisponible) et `purgerDonneesLocales()` (`ADR-006`) |
    | Bout en bout | Playwright (Chromium) | Les images compilées, lancées par Docker Compose | `CASE-AUTH-52` et `54` (purge), `REQ-109` en mode avion, révocation sur un second appareil (`SPEC-AUTH-10` AC-4), précache sans `/api/` (`ADR-006`), un parcours nominal recherche trail → téléchargement GPX |
 
@@ -183,6 +203,14 @@ et un script vérifie la correspondance CASE ↔ test.
    fichier séparé. Les dépendances injectées sont : horloge, registre des
    sources, transport de courriel, journaliseur, client d'IA, accès à la base.
    La production passe les vraies ; les tests passent des doubles.
+
+   **Client de test de l'API.** Chaque fichier d'intégration démarre
+   l'application sur le port `0` (choisi par le système) et l'arrête à la fin.
+   Les requêtes passent par un petit utilitaire, `creerClientTest(adresse)`,
+   qui enveloppe `fetch`, conserve le cookie de session renvoyé par l'API et
+   le renvoie aux requêtes suivantes. Un client = un appareil : deux clients
+   sur le même compte simulent deux appareils. Les vérifications (statut,
+   en-têtes, corps) sont des assertions Vitest ordinaires.
 
 ### Traçabilité CASE → test
 
@@ -338,8 +366,8 @@ et un script vérifie la correspondance CASE ↔ test.
     - blocage : le seuil et la durée sont **lus dans les paramètres**, jamais
       écrits en dur dans le test ; la tentative qui suit le seuil est refusée
       même avec le bon mot de passe ; l'horloge avancée de la durée rend la
-      connexion de nouveau possible ; deux agents Supertest (deux appareils)
-      cumulent le même compteur ;
+      connexion de nouveau possible ; deux clients de test (deux appareils,
+      point 2) cumulent le même compteur ;
     - la parade contre la mesure du temps de réponse (hachage factice pour un
       identifiant inconnu, `ADR-004`) est vérifiée par un espion sur le service
       de hachage, pas par une mesure de durée, trop instable.
@@ -348,7 +376,8 @@ et un script vérifie la correspondance CASE ↔ test.
 
 21. Commandes, depuis la racine du dépôt :
     - `npm run test:unit` — unitaires et composants, sans Docker ;
-    - `npm run test:integration` — démarre `db-test`, puis lance Supertest ;
+    - `npm run test:integration` — démarre `db-test`, puis lance les tests
+      d'intégration (Vitest) ;
     - `npm run test:e2e` — construit et démarre les images, puis lance
       Playwright ;
     - `npm run tracabilite` — contrôle CASE ↔ test.
@@ -373,8 +402,12 @@ et un script vérifie la correspondance CASE ↔ test.
 - **Les règles d'accès vivent dans la combinaison route + session + base.** Une
   session relue en base à chaque requête, un compteur incrémenté de façon
   atomique, une suppression en cascade (`ADR-004`) : aucun de ces mécanismes
-  n'est prouvé par une base simulée. D'où Supertest sur une vraie base, et le
-  rejet de l'option B3.
+  n'est prouvé par une base simulée. D'où des tests d'intégration sur
+  l'application complète et une vraie base, et le rejet de l'option B3.
+- **Pas de Supertest : `fetch` suffit.** Node.js fournit `fetch` ; avec un
+  utilitaire de quelques lignes pour le cookie de session, il couvre tout ce
+  que Supertest apporterait ici, sans dépendance ni syntaxe de plus. Les tests
+  passent en outre par une vraie connexion HTTP, comme le frontend.
 - **`db-test` dans Docker Compose plutôt que Testcontainers** : même résultat,
   une dépendance de moins, et la version de l'image reste écrite à un seul
   endroit (`ADR-002`). Testcontainers reste la voie d'évolution si la suite
@@ -419,7 +452,8 @@ et un script vérifie la correspondance CASE ↔ test.
 - **Suite d'intégration séquentielle**, plus lente que les tests unitaires.
 - **Bout en bout limité à Chromium.** Safari iOS et Firefox sont vérifiés à la
   main lors de la recette de `REQ-101` (`ADR-006`).
-- **Un outil maison à maintenir** : le script de traçabilité.
+- **Deux outils maison à maintenir** : le script de traçabilité et le client
+  de test de l'API (`creerClientTest`).
 - **« Le test échoue si la règle est retirée »** (gabarit CASE) reste vérifié en
   revue, en montrant le test rouge avant le code ; aucun outil ne le garantit.
 - **Partie manuelle de `REQ-110`** (import sur les appareils) hors
@@ -441,6 +475,9 @@ et un script vérifie la correspondance CASE ↔ test.
   normale (il consomme du quota).
 - La revue laisse passer des tests qui restent verts sans la règle : test de
   mutation (Stryker, gratuit) sur le module de calcul d'`ADR-008`.
+- Le client de test maison grossit (gestion de plusieurs cookies, envoi de
+  fichiers pour les imports `REF`, redirections) au point de coûter plus qu'une
+  dépendance : Supertest (option ST).
 - Les tests de composants se révèlent nécessaires au-delà du client HTTP et de
   la purge (logique d'écran complexe) : on étend le niveau composant, sans
   changer d'outil.
